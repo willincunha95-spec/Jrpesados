@@ -1,4 +1,4 @@
-package com.Jrpesados.Jrpesados.domain;
+package com.Jrpesados.Jrpesados.domain.User;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -22,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
+
 
     //Authenticão dos usuários
     @Id
@@ -49,17 +50,25 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN){
+        // Se for ADMIN, ele tem poder total (Admin, Mecânico e Cliente)
+        if (this.role == UserRole.ADMIN) {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_MECANIC"),
                     new SimpleGrantedAuthority("ROLE_CLIENT")
             );
-        }else {
+        }
+        // Se for MECANICO, ele tem permissões específicas da oficina
+        else if (this.role == UserRole.MECANIC) {
+            return List.of(new SimpleGrantedAuthority("ROLE_MECANIC"));
+        }
+        // Por padrão, qualquer outro usuário (ou cliente) tem apenas a role de CLIENT
+        else {
             return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
         }
     }
 
-    @Override
+        @Override
     public @Nullable String getPassword() {
         return password;
     }

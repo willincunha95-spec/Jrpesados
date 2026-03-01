@@ -3,18 +3,15 @@ package com.Jrpesados.Jrpesados.controller;
 
 import com.Jrpesados.Jrpesados.domain.DTO.AuthenticationDTO;
 import com.Jrpesados.Jrpesados.domain.DTO.RegisterDTO;
-import com.Jrpesados.Jrpesados.domain.User;
-import com.Jrpesados.Jrpesados.domain.UserRole;
+import com.Jrpesados.Jrpesados.domain.User.User;
+import com.Jrpesados.Jrpesados.domain.User.UserRole;
 import com.Jrpesados.Jrpesados.infra.security.TokenService;
 import com.Jrpesados.Jrpesados.repositories.UserRepository;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +53,7 @@ public class AuthenticationController {
         String encryptedPassword = passwordEncoder.encode(data.password());
 
         // 3. Criamos o usuário (Atenção à ordem: E-mail, Senha Criptografada, Role)
-        User newUser = new User(data.email(), encryptedPassword, UserRole.CLIENT());
+        User newUser = new User(data.email(), encryptedPassword, UserRole.CLIENT);
 
         // 4. Salvamos no PostgreSQL do Docker
         this.userRepository.save(newUser);
@@ -65,10 +62,17 @@ public class AuthenticationController {
     }
     @PostMapping("/admin/register-staff")
     public ResponseEntity registerStaff(@RequestBody @Valid RegisterDTO data){
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.email(),encryptedPassword, data.role());
+        if (this.userRepository.findByEmail(data.email()) != null) {
+            return ResponseEntity.badRequest().build();
+        }
 
+        String encryptedPassword = passwordEncoder.encode(data.password());
 
+        // Aqui usamos a role vinda do DTO (MECANIC ou ADMIN)
+        User newUser = new User(data.email(), encryptedPassword, data.role());
+
+        this.userRepository.save(newUser);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.Jrpesados.Jrpesados.service;
 
-import com.ProcessoLogistico.ProcessoLogistico.repositories.UserRepository;
+import com.Jrpesados.Jrpesados.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

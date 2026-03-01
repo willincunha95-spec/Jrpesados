@@ -1,4 +1,4 @@
-package com.Jrpesados.Jrpesados.domain;
+package com.Jrpesados.Jrpesados.domain.User;
 
 public enum UserRole {
     CLIENT("client"),
