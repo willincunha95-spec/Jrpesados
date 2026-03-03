@@ -23,11 +23,19 @@ public class Veiculo {
     private Integer ano;
     private Long kmAtual;
 
+    private Double latitude;
+    private Double longitude;
+    private String urlStreamVideo;
+    private String descricaoCarga;
+    private String tamanhoCarga;
+    private Double pesoCarga;
+
+    @Enumerated(EnumType.STRING)
+    private StatusEncomenda statusCarga;
+
+    private String previsaoChegada; // Ex: "Hoje às 16:00" ou "05/03"
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private User proprietario; //O cliente dono do caminhão
-
-
-
-
+    private User proprietario;
 }
