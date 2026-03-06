@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Menu,
   X,
@@ -10,15 +11,10 @@ import {
   History,
   Package,
   LogOut,
+  Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface HeaderProps {
-  user?: {
-    name: string;
-    role: "ROLE_CLIENT" | "ROLE_ADMIN";
-  } | null;
-}
+import { useAuth } from "@/contexts/auth-context";
 
 const navLinks = [
   { href: "/", label: "Início" },
@@ -27,15 +23,24 @@ const navLinks = [
   { href: "#contato", label: "Contato" },
 ];
 
-export function Header({ user = null }: HeaderProps) {
+export function Header() {
+  const router = useRouter();
+  const { user, logout, isAuthenticated } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+    router.push("/");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6">
         <nav className="flex items-center justify-between h-16 md:h-20">
           <Link href="/" className="flex items-center gap-2">
+            <Truck className="w-8 h-8 text-primary" />
             <span className="text-2xl font-bold text-primary">JR</span>
             <span className="text-lg font-semibold text-foreground">
               Pesados
@@ -55,7 +60,7 @@ export function Header({ user = null }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            {user ? (
+            {isAuthenticated && user ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -91,9 +96,7 @@ export function Header({ user = null }: HeaderProps) {
                     </Link>
                     <div className="border-t border-border my-1" />
                     <button
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                      }}
+                      onClick={handleLogout}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-muted transition-colors w-full"
                     >
                       <LogOut className="w-4 h-4" />
@@ -140,7 +143,37 @@ export function Header({ user = null }: HeaderProps) {
                   {link.label}
                 </Link>
               ))}
-              {!user && (
+              {isAuthenticated && user ? (
+                <>
+                  <div className="border-t border-border my-2" />
+                  <Link
+                    href="/cliente/historico"
+                    className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors flex items-center gap-3"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <History className="w-4 h-4" />
+                    Histórico de Locações
+                  </Link>
+                  <Link
+                    href="/cliente/rastreio"
+                    className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors flex items-center gap-3"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Package className="w-4 h-4" />
+                    Rastreio de Encomendas
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="py-3 px-4 text-red-600 hover:bg-muted rounded-lg transition-colors flex items-center gap-3"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </button>
+                </>
+              ) : (
                 <Link
                   href="/login"
                   className="mt-2 py-3 px-4 bg-primary text-primary-foreground font-medium rounded-lg text-center"
