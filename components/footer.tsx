@@ -114,19 +114,21 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-muted-foreground">(11) 99999-9999</p>
-                  <p className="text-sm text-muted-foreground">(11) 3333-3333</p>
+                  <p className="text-sm text-muted-foreground">(11) 95857-2567</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-muted-foreground">contato@jrpesados.com.br</p>
+                <div>
+                  <p className="text-sm text-muted-foreground">jrpesadoslog@hotmail.com</p>
+                  <p className="text-sm text-muted-foreground">jrpesados@jrpesados.com</p>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-muted-foreground">
-                  Av. Industrial, 1234<br />
-                  São Paulo - SP
+                  Rua José Marques Ribeiro, 480<br />
+                  Guaturinho, Cajamar - SP
                 </p>
               </li>
               <li className="flex items-start gap-3">

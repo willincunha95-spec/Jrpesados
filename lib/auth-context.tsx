@@ -7,6 +7,7 @@ export type UserRole = "CLIENT" | "ADMIN" | "MECANIC"
 
 export interface User {
   email: string
+  name?: string
   role: UserRole
 }
 
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const payload = JSON.parse(atob(token.split(".")[1]))
       return {
         email: payload.sub,
+        name: payload.name || undefined,
         role: payload.role || "CLIENT",
       }
     } catch {
