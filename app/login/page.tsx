@@ -33,7 +33,7 @@ export default function LoginPage() {
     }
   }
 
-  // Demo login for testing
+  // Demo login for testing - stays on home page after login
   const handleDemoLogin = async (role: "client" | "admin") => {
     setLoading(true)
     
@@ -43,7 +43,8 @@ export default function LoginPage() {
     )
     localStorage.setItem("token", `header.${demoToken}.signature`)
     
-    router.push(role === "admin" ? "/admin" : "/portal")
+    // Redirect to home page after demo login
+    router.push("/")
   }
 
   return (

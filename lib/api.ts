@@ -81,6 +81,47 @@ export interface DashboardAdmin {
   locacoesAtivas: number
 }
 
+// Financeiro types
+export interface FinanceiroBalanco {
+  id: number
+  descricao: string
+  tipo: "RECEITA" | "DESPESA"
+  valor: number
+  data: string
+  categoria: string
+  status: "PAGO" | "PENDENTE" | "ATRASADO"
+}
+
+export interface FinanceiroResumo {
+  totalReceitas: number
+  totalDespesas: number
+  saldo: number
+  lancamentos: FinanceiroBalanco[]
+}
+
+// Locação types
+export interface Locacao {
+  id: number
+  cliente: string
+  equipamento: string
+  dataInicio: string
+  dataFim: string
+  valorTotal: number
+  status: "ATIVA" | "FINALIZADA" | "CANCELADA"
+}
+
+// Oficina types
+export interface OrdemServico {
+  id: number
+  veiculo: string
+  descricao: string
+  tipo: "PREVENTIVA" | "CORRETIVA" | "REVISAO"
+  dataAbertura: string
+  dataPrevisao: string
+  status: "ABERTA" | "EM_ANDAMENTO" | "FINALIZADA"
+  custo: number
+}
+
 // Função para fazer requisições autenticadas
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
@@ -229,4 +270,29 @@ export function getUserFromToken(): { email: string; role: string } | null {
 
 export function logout() {
   localStorage.removeItem("token")
+}
+
+// Financeiro endpoints
+export async function getFinanceiroTodos(): Promise<FinanceiroResumo> {
+  const res = await fetchWithAuth("/financeiro/todos")
+  return res.json()
+}
+
+// Locações endpoints
+export async function getLocacoesAtivas(): Promise<Locacao[]> {
+  const res = await fetchWithAuth("/locacoes/ativas")
+  return res.json()
+}
+
+// Oficina endpoints
+export async function getOrdensServico(): Promise<OrdemServico[]> {
+  const res = await fetchWithAuth("/oficina/ordens-servico")
+  return res.json()
+}
+
+export async function finalizarOrdemServico(id: number): Promise<string> {
+  const res = await fetchWithAuth(`/oficina/os/${id}/finalizar`, {
+    method: "POST",
+  })
+  return res.text()
 }

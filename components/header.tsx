@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useRef, useEffect } from "react"
-import { Menu, X, Phone, Mail, User, ChevronDown, History, MapPin, LogOut } from "lucide-react"
+import { Menu, X, User, ChevronDown, History, MapPin, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 
@@ -33,25 +33,8 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      {/* Top bar */}
-      <div className="bg-primary text-primary-foreground py-1.5 px-4">
-        <div className="container mx-auto flex items-center justify-between text-sm">
-          <div className="flex items-center gap-6">
-            <a href="tel:+5511999999999" className="flex items-center gap-1.5 hover:underline">
-              <Phone className="h-3.5 w-3.5" />
-              (11) 99999-9999
-            </a>
-            <a href="mailto:contato@jrpesados.com.br" className="hidden sm:flex items-center gap-1.5 hover:underline">
-              <Mail className="h-3.5 w-3.5" />
-              contato@jrpesados.com.br
-            </a>
-          </div>
-          <span className="hidden md:block font-medium">Atendimento 24h</span>
-        </div>
-      </div>
-
       {/* Main header */}
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image
@@ -81,8 +64,8 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {user && user.role === "CLIENT" ? (
-              /* Logged-in client dropdown */
+            {user ? (
+              /* Logged-in user dropdown */
               <div className="relative hidden sm:block" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -97,22 +80,37 @@ export function Header() {
 
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card shadow-lg py-2 z-50">
-                    <Link
-                      href="/portal/historico"
-                      onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                    >
-                      <History className="h-4 w-4" />
-                      Histórico de Locações
-                    </Link>
-                    <Link
-                      href="/portal/rastreio"
-                      onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      Rastreio
-                    </Link>
+                    {user.role === "ADMIN" ? (
+                      /* Admin menu */
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Aceder Dashboard
+                      </Link>
+                    ) : (
+                      /* Client menu */
+                      <>
+                        <Link
+                          href="/portal/historico"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                        >
+                          <History className="h-4 w-4" />
+                          Histórico de Locações
+                        </Link>
+                        <Link
+                          href="/portal/rastreio"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                        >
+                          <MapPin className="h-4 w-4" />
+                          Rastreio
+                        </Link>
+                      </>
+                    )}
                     <div className="my-2 border-t border-border" />
                     <button
                       onClick={() => {
@@ -127,13 +125,6 @@ export function Header() {
                   </div>
                 )}
               </div>
-            ) : user && user.role === "ADMIN" ? (
-              /* Admin link */
-              <Link href="/admin">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-                  Painel Admin
-                </Button>
-              </Link>
             ) : (
               /* Not logged in */
               <Link href="/login">
@@ -174,24 +165,35 @@ export function Header() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-3 border-t border-border">
-                {user && user.role === "CLIENT" ? (
+                {user ? (
                   <>
                     <div className="flex items-center gap-2 px-3 py-2 text-sm text-foreground">
                       <User className="h-4 w-4 text-primary" />
                       {user.name || user.email.split("@")[0]}
                     </div>
-                    <Link href="/portal/historico" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start">
-                        <History className="h-4 w-4 mr-2" />
-                        Histórico de Locações
-                      </Button>
-                    </Link>
-                    <Link href="/portal/rastreio" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        Rastreio
-                      </Button>
-                    </Link>
+                    {user.role === "ADMIN" ? (
+                      <Link href="/admin" onClick={() => setIsMenuOpen(false)}>
+                        <Button variant="ghost" size="sm" className="w-full justify-start">
+                          <LayoutDashboard className="h-4 w-4 mr-2" />
+                          Aceder Dashboard
+                        </Button>
+                      </Link>
+                    ) : (
+                      <>
+                        <Link href="/portal/historico" onClick={() => setIsMenuOpen(false)}>
+                          <Button variant="ghost" size="sm" className="w-full justify-start">
+                            <History className="h-4 w-4 mr-2" />
+                            Histórico de Locações
+                          </Button>
+                        </Link>
+                        <Link href="/portal/rastreio" onClick={() => setIsMenuOpen(false)}>
+                          <Button variant="ghost" size="sm" className="w-full justify-start">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            Rastreio
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
@@ -205,12 +207,6 @@ export function Header() {
                       Sair
                     </Button>
                   </>
-                ) : user && user.role === "ADMIN" ? (
-                  <Link href="/admin" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Painel Admin
-                    </Button>
-                  </Link>
                 ) : (
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" size="sm" className="w-full">

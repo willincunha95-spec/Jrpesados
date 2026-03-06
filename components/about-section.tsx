@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Building2, Award, Users, Target } from "lucide-react"
 
 const highlights = [
@@ -31,21 +32,21 @@ const highlights = [
 
 export function AboutSection() {
   return (
-    <section id="sobre" className="py-20 bg-secondary/30">
+    <section id="sobre" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left content */}
-          <div className="space-y-6">
+          {/* Left content - Text */}
+          <div className="space-y-6 order-2 lg:order-1">
             <div className="inline-block px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
               <span className="text-sm font-medium text-primary">Quem Somos</span>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground leading-tight">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground leading-tight text-balance">
               Sobre a <span className="text-primary">JR Transportes</span> e Logística
             </h2>
             
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
+              <p className="text-lg">
                 Fundada em 2010, a JR Transportes e Logística consolidou sua trajetória com 
                 compromisso na inovação e excelência técnica. Desde 2022, somos referência 
                 em todo o Brasil, dispondo de frota moderna e equipamentos especializados.
@@ -57,23 +58,49 @@ export function AboutSection() {
                 pronta para atender às demandas mais complexas do mercado.
               </p>
             </div>
+
+            {/* Stats inline */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+              {highlights.map((item) => (
+                <div key={item.title} className="text-center">
+                  <p className="text-2xl font-display font-bold text-primary">{item.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Right content - Stats grid */}
-          <div className="grid grid-cols-2 gap-4">
-            {highlights.map((item) => (
-              <div
-                key={item.title}
-                className="p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <item.icon className="h-6 w-6 text-primary" />
+          {/* Right content - Image */}
+          <div className="relative order-1 lg:order-2">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src="/images/frota-jr.jpg"
+                alt="Frota JR Pesados - Caminhões e Equipamentos"
+                fill
+                className="object-cover"
+                priority
+              />
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+              
+              {/* Badge overlay */}
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="bg-card/90 backdrop-blur-sm border border-border rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+                      <Award className="h-6 w-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Referência Nacional</p>
+                      <p className="text-sm text-muted-foreground">+15 anos de experiência</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-3xl font-display font-bold text-primary mb-1">{item.value}</p>
-                <h3 className="font-semibold text-foreground text-sm">{item.title}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
               </div>
-            ))}
+            </div>
+            
+            {/* Decorative element */}
+            <div className="absolute -z-10 -bottom-4 -right-4 w-full h-full rounded-2xl border-2 border-primary/20" />
           </div>
         </div>
       </div>

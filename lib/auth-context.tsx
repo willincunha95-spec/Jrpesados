@@ -74,12 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const decoded = decodeToken(token)
     if (decoded) {
       setUser(decoded)
-      // Redirect based on role
-      if (decoded.role === "ADMIN") {
-        router.push("/admin")
-      } else {
-        router.push("/portal")
-      }
+      // User stays on current page after login - no redirect
     }
   }
 
