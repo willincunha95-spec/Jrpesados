@@ -43,7 +43,8 @@ export default function LoginPage() {
     )
     localStorage.setItem("token", `header.${demoToken}.signature`)
     
-    router.push(role === "admin" ? "/admin" : "/portal")
+    // Redirect to Home after login - user can access dashboard via menu
+    router.push("/")
   }
 
   return (
