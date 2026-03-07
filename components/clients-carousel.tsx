@@ -1,53 +1,43 @@
 "use client"
 
-import { useEffect, useState } from "react"
-
 const clients = [
-  { name: "Sabesp", logo: "/images/clients/sabesp.png" },
-  { name: "FGS", logo: "/images/clients/fgs.png" },
-  { name: "Tauá", logo: "/images/clients/taua.png" },
-  { name: "Sabesp", logo: "/images/clients/sabesp.png" },
-  { name: "FGS", logo: "/images/clients/fgs.png" },
-  { name: "Tauá", logo: "/images/clients/taua.png" },
+  { name: "SABESP" },
+  { name: "FGS" },
+  { name: "TAUÁ" },
+  { name: "SABESP" },
+  { name: "FGS" },
+  { name: "TAUÁ" },
 ]
 
 export function ClientsCarousel() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
-    <section className="py-16 bg-secondary/30 overflow-hidden">
-      <div className="container mx-auto px-4 mb-8">
-        <div className="text-center">
-          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-            Parceiros de Sucesso
-          </span>
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-2">
-            Empresas que confiam em nós
-          </h2>
+    <section className="py-16 lg:py-20 border-y border-border overflow-hidden">
+      <div className="container mx-auto px-6 lg:px-8 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <span className="text-sm font-medium text-accent uppercase tracking-widest">
+              Parceiros
+            </span>
+            <h2 className="font-display text-2xl lg:text-3xl text-foreground mt-2">
+              Empresas que confiam em nós
+            </h2>
+          </div>
+          <p className="text-sm text-muted-foreground max-w-xs">
+            Orgulhosos de atender grandes empresas com excelência e comprometimento.
+          </p>
         </div>
       </div>
 
-      {/* Carousel container */}
+      {/* Marquee */}
       <div className="relative">
-        <div 
-          className={`flex gap-12 ${mounted ? 'animate-scroll' : ''}`}
-          style={{
-            width: 'max-content',
-          }}
-        >
-          {[...clients, ...clients].map((client, index) => (
+        <div className="flex animate-marquee">
+          {[...clients, ...clients, ...clients].map((client, index) => (
             <div
               key={`${client.name}-${index}`}
-              className="flex-shrink-0 w-40 h-24 flex items-center justify-center px-6 group"
+              className="flex-shrink-0 px-8 lg:px-12"
             >
-              <div className="w-full h-full bg-card rounded-xl border border-border flex items-center justify-center p-4 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-lg">
-                <span 
-                  className="text-xl font-bold text-muted-foreground/50 group-hover:text-primary transition-colors duration-300 select-none"
-                >
+              <div className="h-16 lg:h-20 flex items-center justify-center px-8 lg:px-12 border border-border rounded-2xl bg-card hover:border-accent/50 transition-colors group min-w-[160px] lg:min-w-[200px]">
+                <span className="text-xl lg:text-2xl font-display text-muted-foreground/60 group-hover:text-foreground transition-colors tracking-tight">
                   {client.name}
                 </span>
               </div>
@@ -57,18 +47,18 @@ export function ClientsCarousel() {
       </div>
 
       <style jsx>{`
-        @keyframes scroll {
+        @keyframes marquee {
           0% {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translateX(-33.333%);
           }
         }
-        .animate-scroll {
-          animation: scroll 20s linear infinite;
+        .animate-marquee {
+          animation: marquee 25s linear infinite;
         }
-        .animate-scroll:hover {
+        .animate-marquee:hover {
           animation-play-state: paused;
         }
       `}</style>

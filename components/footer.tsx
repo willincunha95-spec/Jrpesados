@@ -2,84 +2,74 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin } from "lucide-react"
+import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react"
+
+const quickLinks = [
+  { href: "#sobre", label: "Sobre" },
+  { href: "#equipamentos", label: "Equipamentos" },
+  { href: "#servicos", label: "Serviços" },
+  { href: "#cotacao", label: "Cotação" },
+  { href: "#trabalhe-conosco", label: "Carreiras" },
+]
+
+const services = [
+  "Transporte Pesado",
+  "Locação de Munck",
+  "Remoções Industriais",
+  "Locação de Empilhadeiras",
+  "Guindastes",
+]
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-foreground text-background">
+      {/* Main footer */}
+      <div className="container mx-auto px-6 lg:px-8 py-16 lg:py-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Company info */}
-          <div className="space-y-4">
+          <div className="sm:col-span-2 lg:col-span-1 space-y-6">
             <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/images/logo.jpg"
                 alt="JR Pesados"
-                width={50}
-                height={50}
+                width={48}
+                height={48}
                 className="rounded-full"
               />
               <div>
-                <h3 className="font-display font-bold text-foreground">JR Pesados</h3>
-                <p className="text-xs text-muted-foreground">Transportes e Remoções</p>
+                <h3 className="font-display text-lg text-background">JR Pesados</h3>
+                <p className="text-xs text-background/50 uppercase tracking-wider">Transportes</p>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Soluções completas em transportes pesados e locação de equipamentos. 
-              Qualidade e segurança há mais de 15 anos.
+            <p className="text-sm text-background/60 leading-relaxed max-w-xs">
+              Soluções completas em transportes pesados e locação de equipamentos. Qualidade e segurança há mais de 25 anos.
             </p>
-            <div className="flex gap-3">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           {/* Quick links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Links Rápidos</h4>
-            <ul className="space-y-3">
+            <h4 className="text-sm font-medium text-background/40 uppercase tracking-widest mb-6">
+              Links
+            </h4>
+            <ul className="space-y-4">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <a 
+                    href={link.href} 
+                    className="text-sm text-background/70 hover:text-background transition-colors inline-flex items-center gap-1 group"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+              ))}
               <li>
-                <a href="#equipamentos" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Equipamentos
-                </a>
-              </li>
-              <li>
-                <a href="#servicos" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Serviços
-                </a>
-              </li>
-              <li>
-                <a href="#cotacao" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Solicitar Cotação
-                </a>
-              </li>
-              <li>
-                <a href="#trabalhe-conosco" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Trabalhe Conosco
-                </a>
-              </li>
-              <li>
-                <Link href="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link 
+                  href="/login" 
+                  className="text-sm text-background/70 hover:text-background transition-colors inline-flex items-center gap-1 group"
+                >
                   Área do Cliente
+                  <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
             </ul>
@@ -87,66 +77,58 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Serviços</h4>
-            <ul className="space-y-3">
-              <li>
-                <span className="text-sm text-muted-foreground">Transporte Pesado</span>
-              </li>
-              <li>
-                <span className="text-sm text-muted-foreground">Locação de Munck</span>
-              </li>
-              <li>
-                <span className="text-sm text-muted-foreground">Remoções Industriais</span>
-              </li>
-              <li>
-                <span className="text-sm text-muted-foreground">Locação de Empilhadeiras</span>
-              </li>
-              <li>
-                <span className="text-sm text-muted-foreground">Guindastes</span>
-              </li>
+            <h4 className="text-sm font-medium text-background/40 uppercase tracking-widest mb-6">
+              Serviços
+            </h4>
+            <ul className="space-y-4">
+              {services.map((service) => (
+                <li key={service}>
+                  <span className="text-sm text-background/70">{service}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Contato</h4>
-            <ul className="space-y-4">
+            <h4 className="text-sm font-medium text-background/40 uppercase tracking-widest mb-6">
+              Contato
+            </h4>
+            <ul className="space-y-5">
               <li className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">(11) 99999-9999</p>
-                  <p className="text-sm text-muted-foreground">(11) 3333-3333</p>
+                <Phone className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-background/70">
+                  <p>(11) 95857-2567</p>
+                  <p>(11) 3333-3333</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-muted-foreground">contato@jrpesados.com.br</p>
+                <Mail className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-background/70">contato@jrpesados.com.br</p>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-background/70">
                   Av. Industrial, 1234<br />
                   São Paulo - SP
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-muted-foreground">
-                  Atendimento 24 horas<br />
-                  7 dias por semana
                 </p>
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} JR Pesados. Todos os direitos reservados.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            CNPJ: 00.000.000/0001-00
-          </p>
+      {/* Bottom bar */}
+      <div className="border-t border-background/10">
+        <div className="container mx-auto px-6 lg:px-8 py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-background/40">
+              © {new Date().getFullYear()} JR Pesados. Todos os direitos reservados.
+            </p>
+            <p className="text-xs text-background/40">
+              Atendimento 24 horas
+            </p>
+          </div>
         </div>
       </div>
     </footer>

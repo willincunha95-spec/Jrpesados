@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Inter, Space_Grotesk } from "next/font/google"
+import { Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
 
@@ -8,9 +8,9 @@ const inter = Inter({
   variable: "--font-inter"
 })
 
-const spaceGrotesk = Space_Grotesk({ 
+const playfair = Playfair_Display({ 
   subsets: ["latin"],
-  variable: "--font-space-grotesk"
+  variable: "--font-playfair"
 })
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#FFAA00",
+  themeColor: "#1a1917",
 }
 
 export default function RootLayout({
@@ -29,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+    <html lang="pt-BR">
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <AuthProvider>
           {children}
         </AuthProvider>

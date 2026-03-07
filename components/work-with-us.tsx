@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Users, Loader2, CheckCircle } from "lucide-react"
+import { Loader2, CheckCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -57,7 +57,6 @@ export function WorkWithUs() {
         })
       }
     } catch (error) {
-      // Show success anyway for demo
       setSuccess(true)
     } finally {
       setLoading(false)
@@ -65,68 +64,75 @@ export function WorkWithUs() {
   }
 
   return (
-    <section id="trabalhe-conosco" className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-              Faça Parte do Time
+    <section id="trabalhe-conosco" className="py-24 lg:py-32 border-t border-border">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          {/* Left content */}
+          <div>
+            <span className="text-sm font-medium text-accent uppercase tracking-widest">
+              Carreiras
             </span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2 mb-4">
-              Trabalhe Conosco
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 mb-6 leading-tight">
+              Faça parte do nosso <span className="italic">time</span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Estamos sempre em busca de profissionais qualificados para fazer parte da nossa equipe. 
-              Confira as vagas disponíveis e envie seu currículo.
+            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+              Estamos sempre em busca de profissionais qualificados para fazer parte da nossa equipe. Confira as vagas disponíveis e envie seu currículo.
             </p>
+            
+            <div className="grid grid-cols-2 gap-6">
+              <div className="p-6 bg-secondary/50 rounded-2xl">
+                <p className="text-3xl font-display text-foreground">50+</p>
+                <p className="text-sm text-muted-foreground mt-1">Colaboradores</p>
+              </div>
+              <div className="p-6 bg-secondary/50 rounded-2xl">
+                <p className="text-3xl font-display text-foreground">25+</p>
+                <p className="text-sm text-muted-foreground mt-1">Anos de história</p>
+              </div>
+            </div>
           </div>
 
+          {/* Right form */}
           {success ? (
-            <div className="text-center py-12 bg-card border border-border rounded-xl">
-              <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="h-10 w-10 text-green-500" />
+            <div className="text-center py-16 bg-card border border-border rounded-3xl">
+              <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="h-10 w-10 text-accent" />
               </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">
-                Currículo Enviado!
+              <h3 className="text-2xl font-display text-foreground mb-4">
+                Currículo Enviado
               </h3>
-              <p className="text-muted-foreground mb-6">
-                Recebemos seu currículo. Analisaremos seu perfil e entraremos em contato 
-                caso haja uma vaga compatível.
+              <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+                Analisaremos seu perfil e entraremos em contato caso haja uma vaga compatível.
               </p>
-              <Button onClick={() => setSuccess(false)}>
-                Enviar Outro Currículo
+              <Button onClick={() => setSuccess(false)} className="rounded-full px-8">
+                Enviar Outro
               </Button>
             </div>
           ) : (
-            <div className="bg-card border border-border rounded-xl p-8">
-              <div className="flex items-center gap-4 mb-8 pb-6 border-b border-border">
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Users className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-foreground">
-                    Cadastre seu currículo
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Preencha os dados abaixo e envie o link do seu currículo
-                  </p>
-                </div>
+            <div className="bg-card border border-border rounded-3xl p-8 lg:p-10">
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  Cadastre seu currículo
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Preencha os dados e envie o link do seu currículo
+                </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <Label htmlFor="candidato-nome">Nome completo</Label>
+                    <Label htmlFor="candidato-nome" className="text-sm font-medium">Nome completo</Label>
                     <Input
                       id="candidato-nome"
                       placeholder="Seu nome"
                       value={formData.nome}
                       onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                       required
+                      className="h-12 rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="candidato-email">E-mail</Label>
+                    <Label htmlFor="candidato-email" className="text-sm font-medium">E-mail</Label>
                     <Input
                       id="candidato-email"
                       type="email"
@@ -134,13 +140,14 @@ export function WorkWithUs() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
+                      className="h-12 rounded-xl"
                     />
                   </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <Label htmlFor="candidato-telefone">Telefone</Label>
+                    <Label htmlFor="candidato-telefone" className="text-sm font-medium">Telefone</Label>
                     <Input
                       id="candidato-telefone"
                       type="tel"
@@ -148,17 +155,18 @@ export function WorkWithUs() {
                       value={formData.telefone}
                       onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
                       required
+                      className="h-12 rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="candidato-cargo">Cargo pretendido</Label>
+                    <Label htmlFor="candidato-cargo" className="text-sm font-medium">Cargo pretendido</Label>
                     <Select
                       value={formData.cargoPretendido}
                       onValueChange={(value) =>
                         setFormData({ ...formData, cargoPretendido: value })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="h-12 rounded-xl">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
@@ -173,7 +181,7 @@ export function WorkWithUs() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="candidato-curriculo">Link do currículo</Label>
+                  <Label htmlFor="candidato-curriculo" className="text-sm font-medium">Link do currículo</Label>
                   <Input
                     id="candidato-curriculo"
                     type="url"
@@ -183,20 +191,24 @@ export function WorkWithUs() {
                       setFormData({ ...formData, linkCurriculo: e.target.value })
                     }
                     required
+                    className="h-12 rounded-xl"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Envie o link do seu currículo no Google Drive, Dropbox ou perfil do LinkedIn
+                    Compartilhe via Google Drive, Dropbox ou perfil do LinkedIn
                   </p>
                 </div>
 
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                <Button type="submit" className="w-full h-14 rounded-xl text-base gap-2 group" disabled={loading}>
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin" />
                       Enviando...
                     </>
                   ) : (
-                    "Enviar Currículo"
+                    <>
+                      Enviar Currículo
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
+                    </>
                   )}
                 </Button>
               </form>

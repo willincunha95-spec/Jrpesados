@@ -8,10 +8,11 @@ export function WhatsAppButton() {
       href="https://wa.me/5511958572567"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
-      aria-label="Contato via WhatsApp"
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white pl-5 pr-6 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all group"
+      aria-label="Contato pelo WhatsApp"
     >
-      <MessageCircle className="h-7 w-7" />
+      <MessageCircle className="h-5 w-5" />
+      <span className="text-sm font-medium hidden sm:inline">Fale conosco</span>
     </a>
   )
 }

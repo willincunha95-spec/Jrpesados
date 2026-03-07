@@ -1,86 +1,92 @@
 "use client"
 
-import { Truck, Package, Wrench, Building2, ArrowRight } from "lucide-react"
+import { Truck, Package, Wrench, Building2, ArrowUpRight } from "lucide-react"
 
 const services = [
   {
     icon: Truck,
     title: "Transporte Pesado",
-    description:
-      "Transporte de cargas pesadas e superdimensionadas com total segurança. Atendemos indústrias, construção civil e eventos.",
+    description: "Transporte de cargas pesadas e superdimensionadas com total segurança para indústrias, construção civil e eventos.",
     features: ["Cargas até 50 toneladas", "Escolta especializada", "Rotas otimizadas"],
   },
   {
     icon: Package,
     title: "Remoções Industriais",
-    description:
-      "Remoção e translocação de máquinas e equipamentos industriais. Planejamento completo e execução segura.",
+    description: "Remoção e translocação de máquinas e equipamentos industriais com planejamento completo e execução segura.",
     features: ["Desmontagem e montagem", "Ancoragem profissional", "Seguro total"],
   },
   {
     icon: Wrench,
     title: "Locação de Munck",
-    description:
-      "Caminhões Munck de diversas capacidades para içamento e movimentação de cargas em obras e indústrias.",
+    description: "Caminhões Munck de diversas capacidades para içamento e movimentação de cargas em obras e indústrias.",
     features: ["Operador qualificado", "Manutenção inclusa", "Disponibilidade 24h"],
   },
   {
     icon: Building2,
     title: "Locação de Equipamentos",
-    description:
-      "Empilhadeiras, guindastes, plataformas elevatórias e outros equipamentos para sua operação.",
+    description: "Empilhadeiras, guindastes, plataformas elevatórias e outros equipamentos para sua operação.",
     features: ["Frota renovada", "Entrega rápida", "Suporte técnico"],
   },
 ]
 
 export function ServicesSection() {
   return (
-    <section id="servicos" className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-            O que fazemos
+    <section id="servicos" className="py-24 lg:py-32">
+      <div className="container mx-auto px-6 lg:px-8">
+        {/* Header */}
+        <div className="max-w-3xl mb-16 lg:mb-24">
+          <span className="text-sm font-medium text-accent uppercase tracking-widest">
+            Serviços
           </span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2 mb-4">
-            Nossos Serviços
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 leading-tight">
+            Soluções completas em transporte e <span className="italic">logística pesada</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Oferecemos soluções completas em transporte pesado e locação de equipamentos, 
-            sempre com foco na segurança e qualidade do serviço.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Services grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {services.map((service, index) => (
-            <div
+            <a
               key={service.title}
-              className="group p-8 rounded-xl border border-border bg-card hover:border-primary/50 transition-all hover:shadow-lg"
+              href="#cotacao"
+              className={`group relative p-8 lg:p-10 rounded-3xl border border-border bg-card hover:bg-secondary/50 transition-all hover:border-accent/30 ${
+                index === 0 ? "lg:col-span-2" : ""
+              }`}
             >
-              <div className="flex items-start gap-6">
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="h-7 w-7 text-primary" />
+              <div className={`flex flex-col ${index === 0 ? "lg:flex-row lg:items-start lg:gap-12" : ""}`}>
+                {/* Icon */}
+                <div className="mb-6 lg:mb-0">
+                  <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                    <service.icon className="h-7 w-7 text-accent" />
+                  </div>
                 </div>
+
+                {/* Content */}
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-xl lg:text-2xl font-semibold text-foreground">
+                      {service.title}
+                    </h3>
+                    <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-accent transition-colors flex-shrink-0 ml-4" />
+                  </div>
+                  
+                  <p className="text-muted-foreground leading-relaxed mb-6">
                     {service.description}
                   </p>
-                  <ul className="space-y-2">
+
+                  <div className="flex flex-wrap gap-2">
                     {service.features.map((feature) => (
-                      <li
+                      <span
                         key={feature}
-                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                        className="px-3 py-1.5 text-sm bg-secondary text-muted-foreground rounded-full"
                       >
-                        <ArrowRight className="h-4 w-4 text-primary" />
                         {feature}
-                      </li>
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

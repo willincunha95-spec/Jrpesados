@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useRef, useEffect } from "react"
-import { Menu, X, ChevronDown, LayoutDashboard, History, LogOut, User } from "lucide-react"
+import { Menu, X, ChevronDown, LayoutDashboard, History, LogOut, User, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 
@@ -12,16 +12,24 @@ const navLinks = [
   { href: "#equipamentos", label: "Equipamentos" },
   { href: "#servicos", label: "Serviços" },
   { href: "#cotacao", label: "Cotação" },
-  { href: "#trabalhe-conosco", label: "Trabalhe Conosco" },
+  { href: "#trabalhe-conosco", label: "Carreiras" },
 ]
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { user, logout, isAdmin, loading } = useAuth()
 
-  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -38,110 +46,114 @@ export function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      {/* Main header */}
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm" 
+          : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          <Link href="/" className="flex items-center gap-3 group">
             <Image
               src="/images/logo.jpg"
               alt="JR Pesados"
-              width={60}
-              height={60}
-              className="rounded-full"
+              width={48}
+              height={48}
+              className="rounded-full ring-2 ring-border group-hover:ring-accent transition-all"
             />
             <div className="hidden sm:block">
-              <h1 className="font-display font-bold text-xl text-foreground">JR Pesados</h1>
-              <p className="text-xs text-muted-foreground">Transportes e Remoções</p>
+              <h1 className="font-display text-xl text-foreground tracking-tight">JR Pesados</h1>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Transportes</p>
             </div>
           </Link>
 
-          {/* Desktop navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
                 {link.label}
+                <span className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {!loading && (
               <>
                 {user ? (
-                  // User is logged in - show profile dropdown
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors"
+                      className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full hover:bg-secondary transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-4 w-4 text-primary" />
+                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                        <User className="h-4 w-4 text-accent" />
                       </div>
-                      <span className="text-sm font-medium text-foreground max-w-[120px] truncate">
+                      <span className="text-sm font-medium text-foreground max-w-[100px] truncate">
                         {user.email.split("@")[0]}
                       </span>
                       <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {/* Dropdown menu */}
                     {isDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-xl shadow-lg py-2 z-50">
-                        <div className="px-4 py-2 border-b border-border">
+                      <div className="absolute right-0 mt-2 w-60 bg-card border border-border rounded-2xl shadow-xl py-2 z-50 overflow-hidden">
+                        <div className="px-4 py-3 bg-secondary/50">
                           <p className="text-sm font-medium text-foreground truncate">{user.email}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{user.role.toLowerCase()}</p>
+                          <p className="text-xs text-muted-foreground capitalize mt-0.5">{user.role.toLowerCase()}</p>
                         </div>
                         
-                        {isAdmin ? (
-                          <Link
-                            href="/admin"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors"
-                          >
-                            <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-                            Aceder Dashboard
-                          </Link>
-                        ) : (
-                          <>
+                        <div className="py-2">
+                          {isAdmin ? (
                             <Link
-                              href="/portal"
+                              href="/admin"
                               onClick={() => setIsDropdownOpen(false)}
                               className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors"
                             >
                               <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-                              Meu Portal
+                              Acessar Dashboard
                             </Link>
-                            <Link
-                              href="/portal/rastreio"
-                              onClick={() => setIsDropdownOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors"
-                            >
-                              <History className="h-4 w-4 text-muted-foreground" />
-                              Histórico / Rastreio
-                            </Link>
-                          </>
-                        )}
+                          ) : (
+                            <>
+                              <Link
+                                href="/portal"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors"
+                              >
+                                <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
+                                Meu Portal
+                              </Link>
+                              <Link
+                                href="/portal/rastreio"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors"
+                              >
+                                <History className="h-4 w-4 text-muted-foreground" />
+                                Rastreamento
+                              </Link>
+                            </>
+                          )}
+                        </div>
                         
-                        <div className="border-t border-border mt-2 pt-2">
+                        <div className="border-t border-border pt-2">
                           <button
                             onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors w-full"
                           >
                             <LogOut className="h-4 w-4" />
-                            Sair
+                            Sair da conta
                           </button>
                         </div>
                       </div>
                     )}
                   </div>
                 ) : (
-                  // User not logged in - show login button
-                  <Link href="/login">
-                    <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+                  <Link href="/login" className="hidden sm:block">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                       Entrar
                     </Button>
                   </Link>
@@ -149,75 +161,69 @@ export function Header() {
               </>
             )}
             
-            <Link href="#cotacao">
-              <Button size="sm" className="hidden sm:inline-flex">
-                Solicitar Cotação
+            <a href="#cotacao" className="hidden sm:block">
+              <Button size="sm" className="rounded-full px-5 gap-2 group">
+                Cotação
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </Button>
-            </Link>
+            </a>
 
-            {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-foreground"
+              className="lg:hidden p-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
               aria-label="Menu"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile navigation */}
         {isMenuOpen && (
-          <nav className="lg:hidden mt-4 pb-4 border-t border-border pt-4">
-            <div className="flex flex-col gap-3">
+          <nav className="lg:hidden py-6 border-t border-border">
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+                  className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="flex flex-col gap-2 pt-3 border-t border-border">
+              <div className="flex flex-col gap-3 pt-4 mt-4 border-t border-border">
                 {!loading && (
                   <>
                     {user ? (
                       <>
-                        <div className="flex items-center gap-2 px-2 py-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <User className="h-4 w-4 text-primary" />
+                        <div className="flex items-center gap-3 px-4 py-2">
+                          <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                            <User className="h-5 w-5 text-accent" />
                           </div>
-                          <span className="text-sm font-medium text-foreground">{user.email.split("@")[0]}</span>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{user.email.split("@")[0]}</p>
+                            <p className="text-xs text-muted-foreground capitalize">{user.role.toLowerCase()}</p>
+                          </div>
                         </div>
                         {isAdmin ? (
                           <Link href="/admin" onClick={() => setIsMenuOpen(false)}>
-                            <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                            <Button variant="outline" className="w-full justify-start gap-2">
                               <LayoutDashboard className="h-4 w-4" />
-                              Aceder Dashboard
+                              Acessar Dashboard
                             </Button>
                           </Link>
                         ) : (
-                          <>
-                            <Link href="/portal" onClick={() => setIsMenuOpen(false)}>
-                              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                                <LayoutDashboard className="h-4 w-4" />
-                                Meu Portal
-                              </Button>
-                            </Link>
-                            <Link href="/portal/rastreio" onClick={() => setIsMenuOpen(false)}>
-                              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                                <History className="h-4 w-4" />
-                                Histórico / Rastreio
-                              </Button>
-                            </Link>
-                          </>
+                          <Link href="/portal" onClick={() => setIsMenuOpen(false)}>
+                            <Button variant="outline" className="w-full justify-start gap-2">
+                              <LayoutDashboard className="h-4 w-4" />
+                              Meu Portal
+                            </Button>
+                          </Link>
                         )}
                         <Button 
                           variant="ghost" 
-                          size="sm" 
-                          className="w-full justify-start gap-2 text-destructive hover:text-destructive"
+                          className="w-full justify-start gap-2 text-destructive"
                           onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                         >
                           <LogOut className="h-4 w-4" />
@@ -226,7 +232,7 @@ export function Header() {
                       </>
                     ) : (
                       <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" size="sm" className="w-full">
+                        <Button variant="outline" className="w-full">
                           Entrar
                         </Button>
                       </Link>
@@ -234,7 +240,7 @@ export function Header() {
                   </>
                 )}
                 <a href="#cotacao" onClick={() => setIsMenuOpen(false)}>
-                  <Button size="sm" className="w-full">
+                  <Button className="w-full">
                     Solicitar Cotação
                   </Button>
                 </a>

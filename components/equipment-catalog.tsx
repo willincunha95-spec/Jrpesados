@@ -1,12 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Truck, Wrench, Package, Loader2 } from "lucide-react"
+import { Truck, Wrench, Package, Loader2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import type { Equipamento } from "@/lib/api"
 
-// Mock data for when API is not available
 const mockEquipamentos: Equipamento[] = [
   {
     id: 1,
@@ -65,9 +63,9 @@ const mockEquipamentos: Equipamento[] = [
 ]
 
 const statusConfig = {
-  DISPONIVEL: { label: "Disponível", variant: "default" as const, color: "bg-green-500" },
-  LOCADO: { label: "Locado", variant: "secondary" as const, color: "bg-primary" },
-  MANUTENCAO: { label: "Manutenção", variant: "destructive" as const, color: "bg-red-500" },
+  DISPONIVEL: { label: "Disponível", color: "bg-accent text-accent-foreground" },
+  LOCADO: { label: "Locado", color: "bg-muted text-muted-foreground" },
+  MANUTENCAO: { label: "Manutenção", color: "bg-destructive/10 text-destructive" },
 }
 
 const getEquipmentIcon = (nome: string) => {
@@ -97,7 +95,6 @@ export function EquipmentCatalog() {
           }
         }
       } catch (error) {
-        // Use mock data if API is not available
         console.log("Using mock data - API not available")
       } finally {
         setLoading(false)
@@ -112,50 +109,50 @@ export function EquipmentCatalog() {
     return eq.status === filter
   })
 
-  return (
-    <section id="equipamentos" className="py-20 bg-secondary/30">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-            Nosso Catálogo
-          </span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2 mb-4">
-            Equipamentos para Locação
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Confira nossa frota completa de veículos e equipamentos disponíveis para locação. 
-            Todos em perfeito estado de conservação e com manutenção em dia.
-          </p>
-        </div>
+  const filters = [
+    { value: "all", label: "Todos" },
+    { value: "DISPONIVEL", label: "Disponíveis" },
+    { value: "LOCADO", label: "Locados" },
+  ]
 
-        {/* Filter buttons */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          <Button
-            variant={filter === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilter("all")}
-          >
-            Todos
-          </Button>
-          <Button
-            variant={filter === "DISPONIVEL" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilter("DISPONIVEL")}
-          >
-            Disponíveis
-          </Button>
-          <Button
-            variant={filter === "LOCADO" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilter("LOCADO")}
-          >
-            Locados
-          </Button>
+  return (
+    <section id="equipamentos" className="py-24 lg:py-32 bg-secondary/30">
+      <div className="container mx-auto px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 lg:mb-16">
+          <div className="max-w-2xl">
+            <span className="text-sm font-medium text-accent uppercase tracking-widest">
+              Catálogo
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4">
+              Equipamentos para <span className="italic">Locação</span>
+            </h2>
+            <p className="text-muted-foreground mt-4 text-lg">
+              Confira nossa frota completa, todos em perfeito estado de conservação.
+            </p>
+          </div>
+
+          {/* Filters */}
+          <div className="flex gap-2 flex-wrap">
+            {filters.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${
+                  filter === f.value
+                    ? "bg-foreground text-background"
+                    : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex justify-center items-center py-24">
+            <Loader2 className="h-8 w-8 animate-spin text-accent" />
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -166,37 +163,50 @@ export function EquipmentCatalog() {
               return (
                 <div
                   key={equipamento.id}
-                  className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg group"
+                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-accent/30 transition-all hover:shadow-lg"
                 >
-                  {/* Image placeholder with icon */}
-                  <div className="h-48 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative">
-                    <Icon className="h-20 w-20 text-primary/30 group-hover:text-primary/50 transition-colors" />
-                    <div className="absolute top-4 right-4">
-                      <Badge variant={status.variant}>{status.label}</Badge>
+                  {/* Image area */}
+                  <div className="h-52 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative">
+                    <Icon className="h-16 w-16 text-muted-foreground/30 group-hover:text-accent/40 transition-colors" />
+                    <div className="absolute top-4 left-4">
+                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${status.color}`}>
+                        {status.label}
+                      </span>
                     </div>
                   </div>
 
                   <div className="p-6">
-                    <h3 className="font-semibold text-lg text-foreground mb-1">
-                      {equipamento.nome}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {equipamento.marca} - {equipamento.modelo}
-                    </p>
+                    <div className="mb-4">
+                      <h3 className="font-semibold text-lg text-foreground mb-1">
+                        {equipamento.nome}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {equipamento.marca} {equipamento.modelo}
+                      </p>
+                    </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <div className="flex items-end justify-between pt-4 border-t border-border">
                       <div>
-                        <p className="text-xs text-muted-foreground">Valor diária</p>
-                        <p className="text-xl font-bold text-primary">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Diária</p>
+                        <p className="text-2xl font-display text-foreground">
                           R$ {equipamento.valorDiaria.toLocaleString("pt-BR")}
                         </p>
                       </div>
                       <a href="#cotacao">
                         <Button 
                           size="sm" 
+                          variant={equipamento.status === "DISPONIVEL" ? "default" : "outline"}
                           disabled={equipamento.status !== "DISPONIVEL"}
+                          className="rounded-full gap-1 group/btn"
                         >
-                          {equipamento.status === "DISPONIVEL" ? "Solicitar" : "Indisponível"}
+                          {equipamento.status === "DISPONIVEL" ? (
+                            <>
+                              Solicitar
+                              <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-0.5 transition-transform" />
+                            </>
+                          ) : (
+                            "Indisponível"
+                          )}
                         </Button>
                       </a>
                     </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Send, Loader2, CheckCircle } from "lucide-react"
+import { Send, Loader2, CheckCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +21,12 @@ const serviceTypes = [
   { value: "locacao-equipamento", label: "Locação de Equipamento" },
   { value: "remocao", label: "Remoção Industrial" },
   { value: "outro", label: "Outro" },
+]
+
+const steps = [
+  { number: "01", title: "Envie sua solicitação", description: "Preencha o formulário com seus dados" },
+  { number: "02", title: "Análise técnica", description: "Nossa equipe avalia sua necessidade" },
+  { number: "03", title: "Proposta personalizada", description: "Receba uma cotação sob medida" },
 ]
 
 export function QuoteForm() {
@@ -57,7 +63,6 @@ export function QuoteForm() {
         })
       }
     } catch (error) {
-      // Show success anyway for demo purposes
       setSuccess(true)
     } finally {
       setLoading(false)
@@ -66,20 +71,19 @@ export function QuoteForm() {
 
   if (success) {
     return (
-      <section id="cotacao" className="py-20 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="h-10 w-10 text-green-500" />
+      <section id="cotacao" className="py-24 lg:py-32 bg-secondary/30">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="max-w-xl mx-auto text-center">
+            <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-8">
+              <CheckCircle className="h-10 w-10 text-accent" />
             </div>
-            <h2 className="text-3xl font-display font-bold text-foreground mb-4">
-              Solicitação Enviada!
+            <h2 className="font-display text-3xl lg:text-4xl text-foreground mb-4">
+              Solicitação Enviada
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Recebemos sua solicitação de cotação. Nossa equipe comercial entrará em contato 
-              em breve para apresentar a melhor proposta.
+            <p className="text-muted-foreground mb-8 text-lg">
+              Nossa equipe comercial entrará em contato em breve para apresentar a melhor proposta para sua necessidade.
             </p>
-            <Button onClick={() => setSuccess(false)}>
+            <Button onClick={() => setSuccess(false)} className="rounded-full px-8">
               Enviar Nova Cotação
             </Button>
           </div>
@@ -89,82 +93,66 @@ export function QuoteForm() {
   }
 
   return (
-    <section id="cotacao" className="py-20 bg-secondary/30">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section id="cotacao" className="py-24 lg:py-32 bg-secondary/30">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left content */}
           <div>
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-              Fale Conosco
+            <span className="text-sm font-medium text-accent uppercase tracking-widest">
+              Contato
             </span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2 mb-4">
-              Solicite sua Cotação
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 mb-6 leading-tight">
+              Solicite sua <span className="italic">Cotação</span>
             </h2>
-            <p className="text-muted-foreground mb-8 leading-relaxed">
-              Preencha o formulário ao lado e nossa equipe comercial entrará em contato 
-              rapidamente com a melhor proposta para sua necessidade. Atendemos todo o Brasil.
+            <p className="text-muted-foreground text-lg leading-relaxed mb-12">
+              Preencha o formulário e nossa equipe comercial entrará em contato rapidamente com a melhor proposta. Atendemos todo o Brasil.
             </p>
 
+            {/* Steps */}
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-bold">1</span>
+              {steps.map((step) => (
+                <div key={step.number} className="flex gap-6">
+                  <span className="text-sm font-medium text-accent">{step.number}</span>
+                  <div className="flex-1 pb-6 border-b border-border last:border-0 last:pb-0">
+                    <h4 className="font-semibold text-foreground mb-1">{step.title}</h4>
+                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-foreground">Envie sua solicitação</h4>
-                  <p className="text-sm text-muted-foreground">Preencha o formulário com seus dados</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-bold">2</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground">Análise técnica</h4>
-                  <p className="text-sm text-muted-foreground">Nossa equipe avalia sua necessidade</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-bold">3</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground">Proposta personalizada</h4>
-                  <p className="text-sm text-muted-foreground">Receba uma cotação sob medida</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           {/* Right form */}
-          <div className="bg-card border border-border rounded-xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid sm:grid-cols-2 gap-4">
+          <div className="bg-card border border-border rounded-3xl p-8 lg:p-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label htmlFor="nome">Nome completo</Label>
+                  <Label htmlFor="nome" className="text-sm font-medium">Nome completo</Label>
                   <Input
                     id="nome"
                     placeholder="Seu nome"
                     value={formData.nome}
                     onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                     required
+                    className="h-12 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="empresa">Empresa</Label>
+                  <Label htmlFor="empresa" className="text-sm font-medium">Empresa</Label>
                   <Input
                     id="empresa"
                     placeholder="Nome da empresa"
                     value={formData.empresa}
                     onChange={(e) => setFormData({ ...formData, empresa: e.target.value })}
                     required
+                    className="h-12 rounded-xl"
                   />
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label htmlFor="telefone">Telefone</Label>
+                  <Label htmlFor="telefone" className="text-sm font-medium">Telefone</Label>
                   <Input
                     id="telefone"
                     type="tel"
@@ -172,15 +160,16 @@ export function QuoteForm() {
                     value={formData.telefone}
                     onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
                     required
+                    className="h-12 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="servico">Tipo de Serviço</Label>
+                  <Label htmlFor="servico" className="text-sm font-medium">Tipo de Serviço</Label>
                   <Select
                     value={formData.tipoServico}
                     onValueChange={(value) => setFormData({ ...formData, tipoServico: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 rounded-xl">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -195,27 +184,28 @@ export function QuoteForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="mensagem">Mensagem</Label>
+                <Label htmlFor="mensagem" className="text-sm font-medium">Mensagem</Label>
                 <Textarea
                   id="mensagem"
                   placeholder="Descreva sua necessidade: tipo de carga, peso aproximado, origem e destino..."
-                  rows={4}
+                  rows={5}
                   value={formData.mensagem}
                   onChange={(e) => setFormData({ ...formData, mensagem: e.target.value })}
                   required
+                  className="rounded-xl resize-none"
                 />
               </div>
 
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              <Button type="submit" className="w-full h-14 rounded-xl text-base gap-2 group" disabled={loading}>
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                     Enviando...
                   </>
                 ) : (
                   <>
-                    <Send className="mr-2 h-4 w-4" />
                     Enviar Solicitação
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
                   </>
                 )}
               </Button>
