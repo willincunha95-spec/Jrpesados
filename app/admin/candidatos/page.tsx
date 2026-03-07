@@ -1,62 +1,22 @@
 "use client"
 
-import { User, Mail, Phone, Briefcase, ExternalLink, Check, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { User, Mail, Phone, Briefcase, ExternalLink, Check, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/lib/auth-context"
 
-// Mock data
-const mockCandidatos = [
-  {
-    id: 1,
-    nome: "Carlos Oliveira",
-    email: "carlos@email.com",
-    telefone: "(11) 99999-1111",
-    cargoPretendido: "Motorista",
-    linkCurriculo: "https://drive.google.com/file/d/example1",
-    dataEnvio: "05/03/2026",
-    status: "PENDENTE",
-  },
-  {
-    id: 2,
-    nome: "Ricardo Santos",
-    email: "ricardo@email.com",
-    telefone: "(11) 99999-2222",
-    cargoPretendido: "Operador de Munck",
-    linkCurriculo: "https://linkedin.com/in/ricardo",
-    dataEnvio: "04/03/2026",
-    status: "PENDENTE",
-  },
-  {
-    id: 3,
-    nome: "Fernando Lima",
-    email: "fernando@email.com",
-    telefone: "(11) 99999-3333",
-    cargoPretendido: "Mecânico",
-    linkCurriculo: "https://drive.google.com/file/d/example2",
-    dataEnvio: "03/03/2026",
-    status: "APROVADO",
-  },
-  {
-    id: 4,
-    nome: "José Pereira",
-    email: "jose@email.com",
-    telefone: "(11) 99999-4444",
-    cargoPretendido: "Operador de Guindaste",
-    linkCurriculo: "https://drive.google.com/file/d/example3",
-    dataEnvio: "02/03/2026",
-    status: "REJEITADO",
-  },
-  {
-    id: 5,
-    nome: "Marcos Silva",
-    email: "marcos@email.com",
-    telefone: "(11) 99999-5555",
-    cargoPretendido: "Motorista",
-    linkCurriculo: "https://linkedin.com/in/marcos",
-    dataEnvio: "01/03/2026",
-    status: "PENDENTE",
-  },
-]
+interface Candidato {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  cargoPretendido: string;
+  linkCurriculo: string;
+  // Fallbacks visually as backend doesn't have these yet
+  dataEnvio?: string;
+  status?: string;
+}
 
 const statusConfig = {
   PENDENTE: { label: "Pendente", variant: "outline" as const, color: "text-primary" },
@@ -65,12 +25,62 @@ const statusConfig = {
 }
 
 export default function CandidatosPage() {
-  const pendentes = mockCandidatos.filter(c => c.status === "PENDENTE")
-  const aprovados = mockCandidatos.filter(c => c.status === "APROVADO")
-  const rejeitados = mockCandidatos.filter(c => c.status === "REJEITADO")
+  const [candidatos, setCandidatos] = useState<Candidato[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    fetchCandidatos()
+  }, [])
+
+  const fetchCandidatos = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await fetch("http://localhost:8080/trabalhe-conosco", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar candidatos (Status: ${response.status} ${response.statusText})`)
+      }
+
+      const data = await response.json()
+      // Adding visual fallbacks for fields that the backend does not provide yet
+      const processedData = data.map((cand: Candidato) => ({
+        ...cand,
+        status: cand.status || "PENDENTE",
+        dataEnvio: cand.dataEnvio || "Via Site JR Pesados"
+      }))
+      
+      setCandidatos(processedData)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const pendentes = candidatos.filter(c => c.status === "PENDENTE")
+  const aprovados = candidatos.filter(c => c.status === "APROVADO")
+  const rejeitados = candidatos.filter(c => c.status === "REJEITADO")
+
+  if (loading) {
+    return (
+      <div className="flex -mt-20 items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
+      {error && (
+        <div className="p-4 bg-destructive/10 text-destructive rounded-lg">
+          {error}
+        </div>
+      )}
       <div>
         <h1 className="text-2xl font-display font-bold text-foreground">Candidatos</h1>
         <p className="text-muted-foreground mt-1">
@@ -81,7 +91,7 @@ export default function CandidatosPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl border border-border bg-card">
-          <p className="text-2xl font-bold text-foreground">{mockCandidatos.length}</p>
+          <p className="text-2xl font-bold text-foreground">{candidatos.length}</p>
           <p className="text-sm text-muted-foreground">Total Recebidos</p>
         </div>
         <div className="p-4 rounded-xl border border-border bg-card">
@@ -100,8 +110,15 @@ export default function CandidatosPage() {
 
       {/* Candidates list */}
       <div className="space-y-4">
-        {mockCandidatos.map((candidato) => {
-          const status = statusConfig[candidato.status as keyof typeof statusConfig]
+        {candidatos.length === 0 ? (
+          <div className="text-center py-12 bg-card border border-border rounded-xl">
+            <User className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground">Nenhum candidato encontrado</h3>
+            <p className="text-muted-foreground mt-1">Os currículos enviados pelo site aparecerão aqui.</p>
+          </div>
+        ) : (
+          candidatos.map((candidato) => {
+            const status = statusConfig[candidato.status as keyof typeof statusConfig] || statusConfig.PENDENTE
           
           return (
             <div
@@ -165,7 +182,8 @@ export default function CandidatosPage() {
               </div>
             </div>
           )
-        })}
+          })
+        )}
       </div>
     </div>
   )

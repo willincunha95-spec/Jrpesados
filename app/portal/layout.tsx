@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { BackButton } from "@/components/back-button"
 
 const sidebarLinks = [
   { href: "/portal", icon: LayoutDashboard, label: "Dashboard" },
@@ -178,6 +179,7 @@ export default function PortalLayout({
         </header>
 
         <main className="flex-1 p-6">
+          <BackButton />
           {children}
         </main>
       </div>

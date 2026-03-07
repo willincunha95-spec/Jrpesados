@@ -37,13 +37,20 @@ export default function LoginPage() {
   const handleDemoLogin = async (role: "client" | "admin") => {
     setLoading(true)
     
-    // Simulate login for demo
-    const demoToken = btoa(
-      JSON.stringify({ sub: role === "admin" ? "admin@jrpesados.com" : "cliente@email.com", role: role === "admin" ? "ADMIN" : "CLIENT" })
-    )
-    localStorage.setItem("token", `header.${demoToken}.signature`)
+    // Simulate login for demo with valid JWT structure (header.payload.signature)
+    // The payload needs 'sub' (email) and 'role'
+    const payload = { 
+      sub: role === "admin" ? "admin@jrpesados.com" : "cliente@email.com", 
+      role: role === "admin" ? "ADMIN" : "CLIENT" 
+    };
+    const demoToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify(payload))}.signature`;
     
-    router.push(role === "admin" ? "/admin" : "/portal")
+    localStorage.setItem("token", demoToken)
+    
+    // Force a small delay to ensure localStorage is updated before redirect
+    setTimeout(() => {
+      window.location.href = role === "admin" ? "/admin" : "/portal";
+    }, 100);
   }
 
   return (
@@ -95,9 +102,9 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Senha</Label>
-                <a href="#" className="text-sm text-primary hover:underline">
+                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                   Esqueceu a senha?
-                </a>
+                </Link>
               </div>
               <div className="relative">
                 <Input

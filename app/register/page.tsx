@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Eye, EyeOff, Loader2, Shield } from "lucide-react"
+import { Eye, EyeOff, Loader2, Shield, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -36,8 +36,8 @@ export default function RegisterPage() {
 
     try {
       await register(email, password)
-    } catch (err) {
-      setError("Falha no cadastro. O e-mail pode já estar em uso.")
+    } catch (err: any) {
+      setError(err.message || "Falha no cadastro. O e-mail pode já estar em uso.")
     } finally {
       setLoading(false)
     }
@@ -98,6 +98,12 @@ export default function RegisterPage() {
                 <p className="text-xs text-muted-foreground">Transportes e Remoções</p>
               </div>
             </Link>
+            
+            <Link href="/login" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors w-fit">
+              <ArrowLeft className="h-4 w-4" />
+              Voltar para login
+            </Link>
+
             <h2 className="text-2xl font-display font-bold text-foreground">
               Criar nova conta
             </h2>

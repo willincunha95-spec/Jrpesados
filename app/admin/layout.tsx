@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/lib/auth-context"
+import { BackButton } from "@/components/back-button"
 import { 
   LayoutDashboard, 
   Truck, 
@@ -16,19 +17,23 @@ import {
   LogOut, 
   Menu,
   X,
-  ShieldCheck
+  ShieldCheck,
+  BarChart3,
+  FileText,
+  Settings
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 const sidebarLinks = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/frota", icon: Truck, label: "Gestão de Frota" },
-  { href: "/admin/equipamentos", icon: Package, label: "Equipamentos" },
-  { href: "/admin/locacoes", icon: MapPin, label: "Locações" },
-  { href: "/admin/financeiro", icon: DollarSign, label: "Financeiro" },
-  { href: "/admin/oficina", icon: Wrench, label: "Oficina" },
-  { href: "/admin/candidatos", icon: Users, label: "Candidatos" },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/frota", label: "Gestão de Frota", icon: Truck },
+  { href: "/admin/oficina", label: "Oficina", icon: Wrench },
+  { href: "/admin/financeiro", label: "Financeiro", icon: BarChart3 },
+  { href: "/admin/locacoes", label: "Locações", icon: FileText },
+  { href: "/admin/equipamentos", label: "Equipamentos", icon: Package },
+  { href: "/admin/candidatos", label: "Candidatos", icon: Users },
+  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ]
 
 export default function AdminLayout({
@@ -41,10 +46,10 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && (!user || !isAdmin)) {
       router.push("/login")
     }
-  }, [user, loading, router])
+  }, [user, loading, isAdmin, router])
 
   if (loading) {
     return (
@@ -54,7 +59,7 @@ export default function AdminLayout({
     )
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return null
   }
 
@@ -184,6 +189,7 @@ export default function AdminLayout({
         </header>
 
         <main className="flex-1 p-6 overflow-y-auto">
+          <BackButton />
           {children}
         </main>
       </div>

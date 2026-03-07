@@ -18,10 +18,14 @@ public class Financeiro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String cliente; // ex: Sabesp, FGS, Tauá
+    private String tipoServico; // ex: Locação, Transporte
+    private String status; // ex: Pendente, Pago
+    
     private String descricao;
     private BigDecimal valor;
     private LocalDateTime dataMovimentacao;
-    private LocalDateTime dataVencimento; // Adicione este campo
+    private LocalDateTime dataVencimento; 
 
     @Enumerated(EnumType.STRING)
     private TipoMovimentacao tipo;

@@ -50,21 +50,28 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Se for ADMIN, ele tem poder total (Admin, Mecânico e Cliente)
-        if (this.role == UserRole.ADMIN) {
+        // Se for ADMIN ou o e-mail mestre, ele tem poder total
+        if (this.role == UserRole.ADMIN || (this.email != null && this.email.equalsIgnoreCase("admin@jrpesados.com"))) {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_MECANIC"),
+                    new SimpleGrantedAuthority("ROLE_USER"),
                     new SimpleGrantedAuthority("ROLE_CLIENT")
             );
         }
         // Se for MECANICO, ele tem permissões específicas da oficina
         else if (this.role == UserRole.MECANIC) {
-            return List.of(new SimpleGrantedAuthority("ROLE_MECANIC"));
+            return List.of(
+                new SimpleGrantedAuthority("ROLE_MECANIC"),
+                new SimpleGrantedAuthority("ROLE_USER")
+            );
         }
-        // Por padrão, qualquer outro usuário (ou cliente) tem apenas a role de CLIENT
+        // Por padrão, qualquer outro usuário (ou cliente) tem a role de USER e CLIENT
         else {
-            return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
+            return List.of(
+                new SimpleGrantedAuthority("ROLE_USER"),
+                new SimpleGrantedAuthority("ROLE_CLIENT")
+            );
         }
     }
 

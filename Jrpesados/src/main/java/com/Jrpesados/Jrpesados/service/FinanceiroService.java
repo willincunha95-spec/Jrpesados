@@ -19,20 +19,37 @@ public class FinanceiroService {
     private FinanceiroRepository financeiroRepository;
 
     @Transactional
-    public void registrarMovimentacao(String descricao, BigDecimal valor, TipoMovimentacao tipo) {
+    public void registrarMovimentacao(com.Jrpesados.Jrpesados.domain.DTO.FinanceiroDTO dto) {
         Financeiro movimento = new Financeiro();
-        movimento.setDescricao(descricao);
-        movimento.setValor(valor);
-        movimento.setTipo(tipo);
+        movimento.setCliente(dto.cliente());
+        movimento.setTipoServico(dto.tipoServico());
+        movimento.setDescricao(dto.descricao());
+        movimento.setValor(dto.valor());
+        movimento.setTipo(dto.tipo());
+        movimento.setStatus(dto.status());
         movimento.setDataMovimentacao(LocalDateTime.now());
-        // Por padrão, se não informada, o vencimento é agora
         movimento.setDataVencimento(LocalDateTime.now());
 
         financeiroRepository.save(movimento);
     }
 
+    public List<Financeiro> listarTudo() {
+        return financeiroRepository.findAll();
+    }
+
     public BigDecimal calcularSaldoTotal() {
-        return BigDecimal.ZERO;
+        List<Financeiro> todos = financeiroRepository.findAll();
+        BigDecimal entradas = todos.stream()
+                .filter(f -> f.getTipo() == TipoMovimentacao.RECEITA)
+                .map(Financeiro::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        BigDecimal saidas = todos.stream()
+                .filter(f -> f.getTipo() == TipoMovimentacao.DESPESA)
+                .map(Financeiro::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        return entradas.subtract(saidas);
     }
 
     // Este método agora compila sem erros

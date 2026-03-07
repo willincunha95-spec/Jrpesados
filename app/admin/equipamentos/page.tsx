@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Package, Plus, Edit, Trash2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Package, Plus, Edit, Trash2, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -14,15 +14,16 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// Mock data
-const mockEquipamentos = [
-  { id: 1, nome: "Caminhão Munck 15t", marca: "Mercedes-Benz", modelo: "Atego 2426", numeroSerie: "MK-001", valorDiaria: 1500, status: "DISPONIVEL" },
-  { id: 2, nome: "Caminhão Munck 25t", marca: "Scania", modelo: "P310", numeroSerie: "MK-002", valorDiaria: 2200, status: "LOCADO" },
-  { id: 3, nome: "Empilhadeira 3t", marca: "Hyster", modelo: "H60FT", numeroSerie: "EMP-001", valorDiaria: 800, status: "LOCADO" },
-  { id: 4, nome: "Guindaste Telescópico", marca: "Liebherr", modelo: "LTM 1060", numeroSerie: "GT-001", valorDiaria: 3500, status: "DISPONIVEL" },
-  { id: 5, nome: "Guincho Pesado", marca: "Volvo", modelo: "FH 540", numeroSerie: "GP-001", valorDiaria: 1800, status: "MANUTENCAO" },
-  { id: 6, nome: "Plataforma Elevatória", marca: "JLG", modelo: "860SJ", numeroSerie: "PE-001", valorDiaria: 950, status: "DISPONIVEL" },
-]
+interface Equipamento {
+  id: number
+  nome: string
+  marca: string
+  modelo: string
+  numeroSerie: string
+  valorDiaria: number
+  status: string
+  imageUrl?: string
+}
 
 const statusConfig = {
   DISPONIVEL: { label: "Disponível", variant: "default" as const },
@@ -33,15 +34,106 @@ const statusConfig = {
 export default function EquipamentosAdminPage() {
   const [showForm, setShowForm] = useState(false)
   const [filter, setFilter] = useState("all")
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([])
+  const [loading, setLoading] = useState(true)
+  
+  const [formData, setFormData] = useState({
+    nome: "",
+    marca: "",
+    modelo: "",
+    numeroSerie: "",
+    valorDiaria: "",
+    status: "DISPONIVEL",
+    imageUrl: ""
+  })
 
-  const filteredEquipamentos = mockEquipamentos.filter((eq) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+
+  const fetchEquipamentos = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${API_URL}/equipamentos`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setEquipamentos(data)
+      }
+    } catch (error) {
+      console.error("Erro ao buscar equipamentos:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchEquipamentos()
+  }, [])
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const payload = {
+        ...formData,
+        valorDiaria: parseFloat(formData.valorDiaria)
+      }
+
+      const res = await fetch(`${API_URL}/equipamentos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        setShowForm(false)
+        setFormData({
+          nome: "", marca: "", modelo: "", numeroSerie: "", valorDiaria: "", status: "DISPONIVEL", imageUrl: ""
+        })
+        fetchEquipamentos()
+      } else {
+        alert("Erro ao salvar equipamento.")
+      }
+    } catch (error) {
+      console.error("Erro ao salvar:", error)
+      alert("Erro de conexão ao salvar.")
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja remover este equipamento?")) return
+
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${API_URL}/equipamentos/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      if (res.ok) {
+        fetchEquipamentos()
+      } else {
+        alert("Erro ao remover equipamento.")
+      }
+    } catch (error) {
+      console.error("Erro ao remover:", error)
+    }
+  }
+
+  const filteredEquipamentos = equipamentos.filter((eq) => {
     if (filter === "all") return true
     return eq.status === filter
   })
 
-  const totalDisponivel = mockEquipamentos.filter(e => e.status === "DISPONIVEL").length
-  const totalLocado = mockEquipamentos.filter(e => e.status === "LOCADO").length
-  const totalManutencao = mockEquipamentos.filter(e => e.status === "MANUTENCAO").length
+  const totalDisponivel = equipamentos.filter(e => e.status === "DISPONIVEL").length
+  const totalLocado = equipamentos.filter(e => e.status === "LOCADO").length
+  const totalManutencao = equipamentos.filter(e => e.status === "MANUTENCAO").length
 
   return (
     <div className="space-y-8">
@@ -61,7 +153,7 @@ export default function EquipamentosAdminPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl border border-border bg-card">
-          <p className="text-2xl font-bold text-foreground">{mockEquipamentos.length}</p>
+          <p className="text-2xl font-bold text-foreground">{equipamentos.length}</p>
           <p className="text-sm text-muted-foreground">Total</p>
         </div>
         <div className="p-4 rounded-xl border border-border bg-card">
@@ -85,27 +177,48 @@ export default function EquipamentosAdminPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Nome</Label>
-              <Input placeholder="Ex: Caminhão Munck 15t" />
+              <Input 
+                placeholder="Ex: Caminhão Munck 15t" 
+                value={formData.nome}
+                onChange={(e) => setFormData({...formData, nome: e.target.value})}
+              />
             </div>
             <div className="space-y-2">
               <Label>Marca</Label>
-              <Input placeholder="Ex: Mercedes-Benz" />
+              <Input 
+                placeholder="Ex: Mercedes-Benz" 
+                value={formData.marca}
+                onChange={(e) => setFormData({...formData, marca: e.target.value})}
+              />
             </div>
             <div className="space-y-2">
               <Label>Modelo</Label>
-              <Input placeholder="Ex: Atego 2426" />
+              <Input 
+                placeholder="Ex: Atego 2426" 
+                value={formData.modelo}
+                onChange={(e) => setFormData({...formData, modelo: e.target.value})}
+              />
             </div>
             <div className="space-y-2">
               <Label>Número de Série</Label>
-              <Input placeholder="Ex: MK-001" />
+              <Input 
+                placeholder="Ex: MK-001" 
+                value={formData.numeroSerie}
+                onChange={(e) => setFormData({...formData, numeroSerie: e.target.value})}
+              />
             </div>
             <div className="space-y-2">
               <Label>Valor Diária (R$)</Label>
-              <Input type="number" placeholder="1500" />
+              <Input 
+                type="number" 
+                placeholder="1500" 
+                value={formData.valorDiaria}
+                onChange={(e) => setFormData({...formData, valorDiaria: e.target.value})}
+              />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select>
+              <Select value={formData.status} onValueChange={(val) => setFormData({...formData, status: val})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -116,9 +229,17 @@ export default function EquipamentosAdminPage() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2 md:col-span-2 lg:col-span-3">
+              <Label>Foto do Equipamento (URL ou Caminho local, ex: /images/frota1.jpg)</Label>
+              <Input 
+                placeholder="Ex: https://... ou /images/foto.jpg" 
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+              />
+            </div>
           </div>
-          <div className="flex gap-2 mt-4">
-            <Button>Salvar Equipamento</Button>
+          <div className="flex gap-2 mt-6">
+            <Button onClick={handleSave}>Salvar Equipamento</Button>
             <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
           </div>
         </div>
@@ -157,60 +278,86 @@ export default function EquipamentosAdminPage() {
       </div>
 
       {/* Equipment table */}
-      <div className="rounded-xl border border-border overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-secondary/50">
-            <tr>
-              <th className="text-left p-4 text-sm font-medium text-muted-foreground">Equipamento</th>
-              <th className="text-left p-4 text-sm font-medium text-muted-foreground hidden md:table-cell">Série</th>
-              <th className="text-left p-4 text-sm font-medium text-muted-foreground">Valor/Dia</th>
-              <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
-              <th className="text-left p-4 text-sm font-medium text-muted-foreground">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {filteredEquipamentos.map((eq) => {
-              const status = statusConfig[eq.status as keyof typeof statusConfig]
-              
-              return (
-                <tr key={eq.id} className="hover:bg-secondary/20">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Package className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{eq.nome}</p>
-                        <p className="text-sm text-muted-foreground">{eq.marca} - {eq.modelo}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
-                    {eq.numeroSerie}
-                  </td>
-                  <td className="p-4">
-                    <p className="font-bold text-primary">
-                      R$ {eq.valorDiaria.toLocaleString("pt-BR")}
-                    </p>
-                  </td>
-                  <td className="p-4">
-                    <Badge variant={status.variant}>{status.label}</Badge>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-1">
-                      <Button size="sm" variant="ghost">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+      <div className="rounded-xl border border-border overflow-hidden bg-card">
+        {loading ? (
+          <div className="p-8 text-center text-muted-foreground">Carregando equipamentos...</div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-secondary/50">
+              <tr>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Foto</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Equipamento</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground hidden md:table-cell">Série</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Valor/Dia</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filteredEquipamentos.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    Nenhum equipamento cadastrado.
                   </td>
                 </tr>
-              )
-            })}
-          </tbody>
-        </table>
+              ) : (
+                filteredEquipamentos.map((eq) => {
+                  const status = statusConfig[eq.status as keyof typeof statusConfig] || statusConfig.DISPONIVEL
+                  
+                  return (
+                    <tr key={eq.id} className="hover:bg-secondary/20">
+                      <td className="p-4">
+                        {eq.imageUrl ? (
+                          <div className="w-16 h-12 rounded bg-muted overflow-hidden">
+                            <img src={eq.imageUrl} alt={eq.nome} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-12 rounded bg-secondary/50 flex items-center justify-center">
+                            <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <p className="font-medium text-foreground">{eq.nome}</p>
+                            <p className="text-sm text-muted-foreground">{eq.marca} - {eq.modelo}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                        {eq.numeroSerie}
+                      </td>
+                      <td className="p-4">
+                        <p className="font-bold text-primary">
+                          R$ {eq.valorDiaria?.toLocaleString("pt-BR") || "0"}
+                        </p>
+                      </td>
+                      <td className="p-4">
+                        <Badge variant={status.variant}>{status.label}</Badge>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="ghost">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => handleDelete(eq.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

@@ -25,6 +25,7 @@ public class TokenService {
            String token = JWT.create()
                    .withIssuer("auth-api")
                    .withSubject(user.getEmail())
+                   .withClaim("role", user.getRole().name())
                    .withExpiresAt(generateExperationData())
                    .sign(algorithm);
            return  token;
@@ -43,7 +44,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
 
-        }catch (JWTCreationException exception){
+        }catch (com.auth0.jwt.exceptions.JWTVerificationException exception){
             return "";
 
         }

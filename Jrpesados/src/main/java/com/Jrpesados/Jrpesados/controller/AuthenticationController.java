@@ -38,7 +38,14 @@ public class AuthenticationController {
         var userNamePassoword = new UsernamePasswordAuthenticationToken(data.email() , data.password());
         var auth = this.authenticationManager.authenticate(userNamePassoword);
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+        User user = (User) auth.getPrincipal();
+        // Self-healing the admin account if it was somehow registered as CLIENT
+        if ("admin@jrpesados.com".equals(user.getEmail()) && user.getRole() != UserRole.ADMIN) {
+            user.setRole(UserRole.ADMIN);
+            userRepository.save(user);
+        }
+
+        var token = tokenService.generateToken(user);
         return  ResponseEntity.ok(token);
     }
 
@@ -72,6 +79,21 @@ public class AuthenticationController {
         User newUser = new User(data.email(), encryptedPassword, data.role());
 
         this.userRepository.save(newUser);
+        return ResponseEntity.ok().build();
+    }
+
+    // Usando uma classe interna ou record local para o DTO do forgot-password 
+    public record ForgotPasswordDTO(String email) {}
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity forgotPassword(@RequestBody @Valid ForgotPasswordDTO data) {
+        // Simulando envio de e-mail de recuperação
+        if (this.userRepository.findByEmail(data.email()) == null) {
+            // Retornamos OK mesmo se o email não existir por questões de segurança
+            return ResponseEntity.ok().build();
+        }
+        
+        // Aqui entraria a lógica real de gerar token de recuperação e enviar email
         return ResponseEntity.ok().build();
     }
 

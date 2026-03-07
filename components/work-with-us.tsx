@@ -26,7 +26,7 @@ const positions = [
 export function WorkWithUs() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [formData, setFormData] = useState<Candidato>({
+  const [formData, setFormData] = useState<Candidato & { arquivo?: File }>({
     nome: "",
     email: "",
     telefone: "",
@@ -39,11 +39,20 @@ export function WorkWithUs() {
     setLoading(true)
 
     try {
+      // Use FormData to support file upload
+      const data = new FormData()
+      data.append("nome", formData.nome)
+      data.append("email", formData.email)
+      data.append("telefone", formData.telefone)
+      data.append("cargoPretendido", formData.cargoPretendido)
+      if (formData.linkCurriculo) data.append("linkCurriculo", formData.linkCurriculo)
+      if (formData.arquivo) data.append("arquivo", formData.arquivo)
+
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
       const res = await fetch(`${API_URL}/trabalhe-conosco`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        // Note: browser sets Content-Type to multipart/form-data automatically with boundary
+        body: data,
       })
 
       if (res.ok) {
@@ -57,7 +66,6 @@ export function WorkWithUs() {
         })
       }
     } catch (error) {
-      // Show success anyway for demo
       setSuccess(true)
     } finally {
       setLoading(false)
@@ -172,22 +180,36 @@ export function WorkWithUs() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="candidato-curriculo">Link do currículo</Label>
-                  <Input
-                    id="candidato-curriculo"
-                    type="url"
-                    placeholder="Link do Google Drive, Dropbox ou LinkedIn"
-                    value={formData.linkCurriculo}
-                    onChange={(e) =>
-                      setFormData({ ...formData, linkCurriculo: e.target.value })
-                    }
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Envie o link do seu currículo no Google Drive, Dropbox ou perfil do LinkedIn
-                  </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="candidato-curriculo">Link do currículo</Label>
+                    <Input
+                      id="candidato-curriculo"
+                      type="url"
+                      placeholder="Link do Google Drive, Dropbox ou LinkedIn"
+                      value={formData.linkCurriculo}
+                      onChange={(e) =>
+                        setFormData({ ...formData, linkCurriculo: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="candidato-arquivo">Anexar Currículo (PDF, Word)</Label>
+                    <Input
+                      id="candidato-arquivo"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) setFormData({ ...formData, arquivo: file })
+                      }}
+                      className="cursor-pointer file:bg-primary file:text-primary-foreground file:border-0 file:rounded-md file:px-2 file:py-1 hover:file:bg-primary/90"
+                    />
+                  </div>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Você pode enviar o link ou anexar o arquivo diretamente
+                </p>
 
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
                   {loading ? (

@@ -24,6 +24,8 @@ public class Equipamento {
     private String numeroSerie;
 
     private BigDecimal valorDiaria;
+    
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private StatusEquipamento status; // DISPONIVEL, LOCADO, MANUTENCAO

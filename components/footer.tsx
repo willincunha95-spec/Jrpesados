@@ -25,8 +25,8 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Soluções completas em transportes pesados e locação de equipamentos. 
-              Qualidade e segurança há mais de 15 anos.
+              Fundada em 2010, consolidou sua trajetória com inovação e excelência técnica.
+              Frota moderna e equipe experiente para operações de alta complexidade.
             </p>
             <div className="flex gap-3">
               <a
@@ -77,11 +77,7 @@ export function Footer() {
                   Trabalhe Conosco
                 </a>
               </li>
-              <li>
-                <Link href="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Área do Cliente
-                </Link>
-              </li>
+              
             </ul>
           </div>
 
@@ -114,19 +110,21 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-muted-foreground">(11) 99999-9999</p>
-                  <p className="text-sm text-muted-foreground">(11) 3333-3333</p>
+                  <p className="text-sm text-muted-foreground">(11) 95857-2567</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-muted-foreground">contato@jrpesados.com.br</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">jrpesadoslog@hotmail.com</p>
+                  <p className="text-sm text-muted-foreground">jrpesados@jrpesados.com</p>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-muted-foreground">
-                  Av. Industrial, 1234<br />
-                  São Paulo - SP
+                  Rua José Marques Ribeiro, 480<br />
+                  Guaturinho, Cajamar - SP
                 </p>
               </li>
               <li className="flex items-start gap-3">
@@ -145,7 +143,7 @@ export function Footer() {
             © {new Date().getFullYear()} JR Pesados. Todos os direitos reservados.
           </p>
           <p className="text-sm text-muted-foreground">
-            CNPJ: 00.000.000/0001-00
+            CNPJ: 11.968.578/0001-52
           </p>
         </div>
       </div>
