@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Truck, Wrench, Package, Loader2, ArrowRight } from "lucide-react"
+import Image from "next/image"
+import { Loader2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Equipamento } from "@/lib/api"
 
@@ -63,19 +64,18 @@ const mockEquipamentos: Equipamento[] = [
 ]
 
 const statusConfig = {
-  DISPONIVEL: { label: "Disponível", color: "bg-accent text-accent-foreground" },
-  LOCADO: { label: "Locado", color: "bg-muted text-muted-foreground" },
-  MANUTENCAO: { label: "Manutenção", color: "bg-destructive/10 text-destructive" },
+  DISPONIVEL: { label: "Disponível", color: "bg-green-500/10 text-green-600 border-green-500/20" },
+  LOCADO: { label: "Locado", color: "bg-muted text-muted-foreground border-border" },
+  MANUTENCAO: { label: "Manutenção", color: "bg-destructive/10 text-destructive border-destructive/20" },
 }
 
-const getEquipmentIcon = (nome: string) => {
-  if (nome.toLowerCase().includes("caminhão") || nome.toLowerCase().includes("munck")) {
-    return Truck
-  }
-  if (nome.toLowerCase().includes("guinch") || nome.toLowerCase().includes("guind")) {
-    return Package
-  }
-  return Wrench
+const equipmentImages: Record<string, string> = {
+  "Caminhão Munck 15t": "/images/munck-truck.jpg",
+  "Caminhão Munck 25t": "/images/munck-truck.jpg",
+  "Empilhadeira 3t": "/images/forklift.jpg",
+  "Guindaste Telescópico": "/images/fleet.jpg",
+  "Guincho Pesado": "/images/hero-truck.jpg",
+  "Plataforma Elevatória": "/images/forklift.jpg",
 }
 
 export function EquipmentCatalog() {
@@ -116,19 +116,17 @@ export function EquipmentCatalog() {
   ]
 
   return (
-    <section id="equipamentos" className="py-24 lg:py-32 bg-secondary/30">
-      <div className="container mx-auto px-6 lg:px-8">
+    <section id="equipamentos" className="py-20 lg:py-28 bg-secondary/30">
+      <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 lg:mb-16">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
           <div className="max-w-2xl">
-            <span className="text-sm font-medium text-accent uppercase tracking-widest">
-              Catálogo
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4">
-              Equipamentos para <span className="italic">Locação</span>
+            <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-3">Catálogo</p>
+            <h2 className="font-display font-bold text-3xl lg:text-4xl text-foreground mb-4">
+              Equipamentos para Locação
             </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              Confira nossa frota completa, todos em perfeito estado de conservação.
+            <p className="text-muted-foreground text-lg">
+              Confira nossa frota completa de equipamentos, todos em perfeito estado de conservação e prontos para operação.
             </p>
           </div>
 
@@ -138,9 +136,9 @@ export function EquipmentCatalog() {
               <button
                 key={f.value}
                 onClick={() => setFilter(f.value)}
-                className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${
+                className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${
                   filter === f.value
-                    ? "bg-foreground text-background"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
                 }`}
               >
@@ -157,19 +155,25 @@ export function EquipmentCatalog() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEquipamentos.map((equipamento) => {
-              const Icon = getEquipmentIcon(equipamento.nome)
               const status = statusConfig[equipamento.status]
+              const imageSrc = equipmentImages[equipamento.nome] || "/images/fleet.jpg"
 
               return (
                 <div
                   key={equipamento.id}
-                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:border-accent/30 transition-all hover:shadow-lg"
+                  className="group bg-card border border-border rounded-xl overflow-hidden hover:border-accent/30 transition-all hover:shadow-lg"
                 >
                   {/* Image area */}
-                  <div className="h-52 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative">
-                    <Icon className="h-16 w-16 text-muted-foreground/30 group-hover:text-accent/40 transition-colors" />
+                  <div className="h-48 relative overflow-hidden">
+                    <Image
+                      src={imageSrc}
+                      alt={equipamento.nome}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute top-4 left-4">
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${status.color}`}>
+                      <span className={`px-3 py-1 text-xs font-medium rounded-full border ${status.color}`}>
                         {status.label}
                       </span>
                     </div>
@@ -177,7 +181,7 @@ export function EquipmentCatalog() {
 
                   <div className="p-6">
                     <div className="mb-4">
-                      <h3 className="font-semibold text-lg text-foreground mb-1">
+                      <h3 className="font-bold text-lg text-foreground mb-1">
                         {equipamento.nome}
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -187,22 +191,25 @@ export function EquipmentCatalog() {
 
                     <div className="flex items-end justify-between pt-4 border-t border-border">
                       <div>
-                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Diária</p>
-                        <p className="text-2xl font-display text-foreground">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Diária a partir de</p>
+                        <p className="text-2xl font-bold text-foreground">
                           R$ {equipamento.valorDiaria.toLocaleString("pt-BR")}
                         </p>
                       </div>
                       <a href="#cotacao">
                         <Button 
                           size="sm" 
+                          className={equipamento.status === "DISPONIVEL" 
+                            ? "bg-accent hover:bg-accent/90 text-accent-foreground" 
+                            : ""
+                          }
                           variant={equipamento.status === "DISPONIVEL" ? "default" : "outline"}
                           disabled={equipamento.status !== "DISPONIVEL"}
-                          className="rounded-full gap-1 group/btn"
                         >
                           {equipamento.status === "DISPONIVEL" ? (
                             <>
                               Solicitar
-                              <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-0.5 transition-transform" />
+                              <ArrowRight className="h-4 w-4 ml-1" />
                             </>
                           ) : (
                             "Indisponível"

@@ -1,9 +1,10 @@
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { AboutSection } from "@/components/about-section"
-import { ClientsCarousel } from "@/components/clients-carousel"
-import { EquipmentCatalog } from "@/components/equipment-catalog"
+import { StatsSection } from "@/components/stats-section"
 import { ServicesSection } from "@/components/services-section"
+import { EquipmentCatalog } from "@/components/equipment-catalog"
+import { ClientsCarousel } from "@/components/clients-carousel"
 import { QuoteForm } from "@/components/quote-form"
 import { WorkWithUs } from "@/components/work-with-us"
 import { Footer } from "@/components/footer"
@@ -15,9 +16,10 @@ export default function HomePage() {
       <Header />
       <HeroSection />
       <AboutSection />
-      <ClientsCarousel />
-      <EquipmentCatalog />
+      <StatsSection />
       <ServicesSection />
+      <EquipmentCatalog />
+      <ClientsCarousel />
       <QuoteForm />
       <WorkWithUs />
       <Footer />

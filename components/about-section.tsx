@@ -1,72 +1,70 @@
 "use client"
 
 import Image from "next/image"
+import { CheckCircle2 } from "lucide-react"
 
-const values = [
-  {
-    number: "01",
-    title: "Excelência Operacional",
-    description: "Frota moderna e equipamentos de última geração para garantir a máxima eficiência em cada operação.",
-  },
-  {
-    number: "02",
-    title: "Compromisso com Segurança",
-    description: "Todos os processos seguem rigorosos protocolos de segurança, priorizando a integridade de cargas e pessoas.",
-  },
-  {
-    number: "03",
-    title: "Atendimento Nacional",
-    description: "Estrutura completa para atender todo o território brasileiro com agilidade e qualidade.",
-  },
+const highlights = [
+  "Frota moderna e equipamentos especializados",
+  "Equipe técnica altamente qualificada",
+  "Atendimento personalizado 24 horas",
+  "Cobertura em todo território nacional",
 ]
 
 export function AboutSection() {
   return (
-    <section id="sobre" className="py-24 lg:py-32">
-      <div className="container mx-auto px-6 lg:px-8">
-        {/* Header */}
-        <div className="max-w-3xl mb-16 lg:mb-24">
-          <span className="text-sm font-medium text-accent uppercase tracking-widest">
-            Sobre nós
-          </span>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground mt-4 leading-tight">
-            Fundada em 2010, a JR Transportes e Logística consolidou sua trajetória com compromisso na{" "}
-            <span className="italic">inovação</span> e{" "}
-            <span className="italic">excelência técnica</span>.
-          </h2>
-        </div>
-
-        {/* Content grid */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Left - Image */}
-          <div className="relative">
-            <div className="aspect-[3/4] rounded-3xl overflow-hidden bg-secondary">
+    <section id="sobre" className="py-20 lg:py-28 bg-background">
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Image Side */}
+          <div className="relative order-2 lg:order-1">
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/images/frota.jpg"
-                alt="Nossa Frota"
+                src="/images/fleet.jpg"
+                alt="Frota JR Transportes"
                 fill
                 className="object-cover"
               />
             </div>
+            {/* Floating Card */}
+            <div className="absolute -bottom-6 -right-4 lg:-right-8 bg-accent text-accent-foreground p-6 lg:p-8 rounded-xl shadow-2xl">
+              <p className="text-4xl lg:text-5xl font-bold">2010</p>
+              <p className="text-sm lg:text-base mt-1 opacity-90">Ano de Fundação</p>
+            </div>
             {/* Decorative element */}
-            <div className="absolute -z-10 top-8 -right-8 w-full h-full border border-border rounded-3xl hidden lg:block" />
+            <div className="absolute -top-4 -left-4 w-24 h-24 border-2 border-primary/20 rounded-xl -z-10" />
           </div>
 
-          {/* Right - Content */}
-          <div className="flex flex-col justify-center space-y-12">
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Desde 2022, somos referência em todo o Brasil, dispondo de frota moderna e equipamentos especializados. Nossa missão é oferecer soluções completas em transporte pesado e locação de equipamentos, sempre priorizando a segurança, qualidade e satisfação dos nossos clientes.
-            </p>
+          {/* Content Side */}
+          <div className="space-y-6 order-1 lg:order-2">
+            <div>
+              <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-3">Sobre Nós</p>
+              <h2 className="font-display font-bold text-3xl lg:text-4xl text-foreground leading-tight">
+                Nossa História
+              </h2>
+            </div>
 
-            {/* Values */}
-            <div className="space-y-8">
-              {values.map((value) => (
-                <div key={value.number} className="flex gap-6 group">
-                  <span className="text-sm font-medium text-accent">{value.number}</span>
-                  <div className="flex-1 pb-8 border-b border-border group-last:border-0 group-last:pb-0">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">{value.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{value.description}</p>
-                  </div>
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <p className="text-lg">
+                Fundada em 2010, a <strong className="text-foreground">JR Transportes e Logística</strong> consolidou 
+                sua trajetória com compromisso na inovação e excelência técnica.
+              </p>
+              <p>
+                Desde 2022, somos referência em todo o Brasil, dispondo de frota moderna e 
+                equipamentos especializados para atender às mais diversas demandas do mercado 
+                de transportes pesados e remoções industriais.
+              </p>
+              <p>
+                Nossa missão é oferecer soluções completas e personalizadas, garantindo 
+                segurança, pontualidade e eficiência em cada operação realizada.
+              </p>
+            </div>
+
+            {/* Highlights */}
+            <div className="grid sm:grid-cols-2 gap-4 pt-4">
+              {highlights.map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground">{item}</span>
                 </div>
               ))}
             </div>

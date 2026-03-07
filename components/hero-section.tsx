@@ -1,96 +1,84 @@
 "use client"
 
 import Image from "next/image"
-import { ArrowRight, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-const stats = [
-  { value: "25+", label: "Anos de experiência" },
-  { value: "500+", label: "Clientes atendidos" },
-  { value: "50+", label: "Veículos na frota" },
-  { value: "24h", label: "Atendimento" },
-]
+import { ArrowRight, Play } from "lucide-react"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col">
-      {/* Hero content */}
-      <div className="flex-1 flex items-center pt-20">
-        <div className="container mx-auto px-6 lg:px-8 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left content */}
-            <div className="space-y-8 lg:space-y-10">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full">
-                  <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                  <span className="text-sm font-medium text-foreground">Líderes em Transportes Pesados</span>
-                </div>
-                
-                <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-foreground leading-[1.1] tracking-tight">
-                  Soluções em{" "}
-                  <span className="italic">Transportes</span> e{" "}
-                  <span className="italic">Locação</span>
-                </h1>
-                
-                <p className="text-lg lg:text-xl text-muted-foreground max-w-lg leading-relaxed">
-                  Há mais de 25 anos oferecendo serviços de transporte pesado e locação de equipamentos com excelência e segurança.
-                </p>
-              </div>
+    <section className="relative min-h-[85vh] flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/hero-truck.jpg"
+          alt="Frota JR Transportes"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/50" />
+      </div>
 
-              <div className="flex flex-wrap gap-4">
-                <a href="#cotacao">
-                  <Button size="lg" className="rounded-full px-8 gap-2 group h-14 text-base">
-                    Solicitar Cotação
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </a>
-                <a href="#sobre">
-                  <Button variant="outline" size="lg" className="rounded-full px-8 h-14 text-base">
-                    Conhecer mais
-                  </Button>
-                </a>
-              </div>
+      {/* Content */}
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 py-20">
+        <div className="max-w-3xl">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+            <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+            <span className="text-sm font-medium text-white">Desde 2010 no mercado</span>
+          </div>
+
+          {/* Title */}
+          <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
+            Soluções Completas em{" "}
+            <span className="text-accent">Transportes Pesados</span>{" "}
+            e Logística
+          </h1>
+
+          {/* Description */}
+          <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-10 max-w-2xl">
+            Referência em todo o Brasil, oferecemos frota moderna e equipamentos especializados 
+            para transportes pesados, remoções industriais e locação de equipamentos.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a href="#cotacao">
+              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 h-14 text-base gap-2 group w-full sm:w-auto">
+                Solicitar Orçamento
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </a>
+            <a href="#servicos">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white/30 bg-white/5 text-white hover:bg-white/10 hover:text-white px-8 h-14 text-base gap-2 w-full sm:w-auto"
+              >
+                <Play className="h-5 w-5" />
+                Nossos Serviços
+              </Button>
+            </a>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap items-center gap-8 mt-16 pt-8 border-t border-white/20">
+            <div>
+              <p className="text-3xl font-bold text-accent">15+</p>
+              <p className="text-sm text-white/60">Anos de Experiência</p>
             </div>
-
-            {/* Right content - Image */}
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-secondary">
-                <Image
-                  src="/images/frota.jpg"
-                  alt="Frota JR Pesados"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              {/* Floating card */}
-              <div className="absolute -bottom-6 -left-6 lg:-left-12 bg-card border border-border p-6 rounded-2xl shadow-2xl max-w-[240px]">
-                <p className="text-4xl lg:text-5xl font-display text-foreground">25+</p>
-                <p className="text-sm text-muted-foreground mt-1">Anos de experiência no mercado brasileiro</p>
-              </div>
+            <div className="w-px h-12 bg-white/20 hidden sm:block" />
+            <div>
+              <p className="text-3xl font-bold text-accent">500+</p>
+              <p className="text-sm text-white/60">Projetos Realizados</p>
+            </div>
+            <div className="w-px h-12 bg-white/20 hidden sm:block" />
+            <div>
+              <p className="text-3xl font-bold text-accent">24h</p>
+              <p className="text-sm text-white/60">Atendimento</p>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Stats bar */}
-      <div className="border-t border-border bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border">
-            {stats.map((stat) => (
-              <div key={stat.label} className="py-8 lg:py-10 px-4 lg:px-8 text-center lg:text-left">
-                <p className="text-3xl lg:text-4xl font-display text-foreground">{stat.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-muted-foreground">
-        <span className="text-xs uppercase tracking-widest">Scroll</span>
-        <ArrowDown className="h-4 w-4 animate-bounce" />
       </div>
     </section>
   )

@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-playfair)", "Georgia", "serif"],
+        display: ["var(--font-montserrat)", "system-ui", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",
