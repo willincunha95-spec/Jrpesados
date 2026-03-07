@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
-import { Menu, X, Phone, Mail } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const navLinks = [
@@ -18,23 +18,6 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      {/* Top bar */}
-      <div className="bg-primary text-primary-foreground py-1.5 px-4">
-        <div className="container mx-auto flex items-center justify-between text-sm">
-          <div className="flex items-center gap-6">
-            <a href="tel:+5511999999999" className="flex items-center gap-1.5 hover:underline">
-              <Phone className="h-3.5 w-3.5" />
-              (11) 99999-9999
-            </a>
-            <a href="mailto:contato@jrpesados.com.br" className="hidden sm:flex items-center gap-1.5 hover:underline">
-              <Mail className="h-3.5 w-3.5" />
-              contato@jrpesados.com.br
-            </a>
-          </div>
-          <span className="hidden md:block font-medium">Atendimento 24h</span>
-        </div>
-      </div>
-
       {/* Main header */}
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
