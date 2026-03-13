@@ -47,12 +47,21 @@ function AuthProvider({ children }) {
     // Decode JWT token to get user info
     const decodeToken = (token)=>{
         try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
+            if (!token || !token.includes(".")) return null;
+            const base64Payload = token.split(".")[1];
+            let payloadText = "";
+            if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+            ;
+            else {
+                payloadText = Buffer.from(base64Payload, "base64").toString();
+            }
+            const payload = JSON.parse(payloadText);
             return {
                 email: payload.sub,
                 role: payload.role || "CLIENT"
             };
-        } catch  {
+        } catch (e) {
+            console.error("Erro ao decodificar token:", e);
             return null;
         }
     };
@@ -140,7 +149,7 @@ function AuthProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/lib/auth-context.tsx",
-        lineNumber: 116,
+        lineNumber: 127,
         columnNumber: 5
     }, this);
 }

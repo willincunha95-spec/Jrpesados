@@ -92,13 +92,10 @@ export function EquipmentCatalog() {
         const res = await fetch(`${API_URL}/equipamentos/catalogo`)
         if (res.ok) {
           const data = await res.json()
-          if (data.length > 0) {
-            setEquipamentos(data)
-          }
+          setEquipamentos(data)
         }
       } catch (error) {
-        // Use mock data if API is not available
-        console.log("Using mock data - API not available")
+        console.error("Erro fetch catalogo:", error)
       } finally {
         setLoading(false)
       }
@@ -168,9 +165,17 @@ export function EquipmentCatalog() {
                   key={equipamento.id}
                   className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg group"
                 >
-                  {/* Image placeholder with icon */}
+                  {/* Image with icon fallback */}
                   <div className="h-48 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative">
-                    <Icon className="h-20 w-20 text-primary/30 group-hover:text-primary/50 transition-colors" />
+                    {equipamento.imageUrl ? (
+                      <img 
+                        src={equipamento.imageUrl.startsWith("http") ? equipamento.imageUrl : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080") + equipamento.imageUrl} 
+                        className="w-full h-full object-cover" 
+                        alt={equipamento.nome} 
+                      />
+                    ) : (
+                      <Icon className="h-20 w-20 text-primary/30 group-hover:text-primary/50 transition-colors" />
+                    )}
                     <div className="absolute top-4 right-4">
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </div>

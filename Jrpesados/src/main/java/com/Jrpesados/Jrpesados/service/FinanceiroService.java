@@ -66,4 +66,9 @@ public class FinanceiroService {
                         "http://jrpesados.com/notas/download/" + f.getId()
                 )).toList();
     }
+
+    @Transactional
+    public void deletar(Long id) {
+        financeiroRepository.deleteById(id);
+    }
 }

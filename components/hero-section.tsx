@@ -73,7 +73,7 @@ export function HeroSection() {
                 <p className="text-sm text-muted-foreground">anos de experiência</p>
               </div>
               <div>
-                <p className="text-3xl font-display font-bold text-primary">100+</p>
+                <p className="text-3xl font-display font-bold text-primary">30+</p>
                 <p className="text-sm text-muted-foreground">equipamentos na frota</p>
               </div>
               <div>

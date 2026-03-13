@@ -17,6 +17,12 @@ public class Candidato {
     private String nome;
     private String email;
     private String telefone;
-    private String cargoPretendido; // Ex: Motorista, Mecânico, Operador de Guindaste
-    private String linkCurriculo; // Aqui o Rhuan manda o link do PDF/Drive
-}
+    private String cargoPretendido; 
+    private String linkCurriculo; 
+    
+    // Status do candidato no processo seletivo
+    private String status = "PENDENTE"; 
+    
+    @Column(name = "data_envio")
+    private java.time.LocalDateTime dataEnvio = java.time.LocalDateTime.now();
+}

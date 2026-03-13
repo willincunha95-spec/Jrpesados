@@ -22,6 +22,12 @@ import {
   Mail,
   MapPin
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Cotacao {
   id: string
@@ -112,12 +118,39 @@ export default function CotacoesPage() {
   const [selectedCotacao, setSelectedCotacao] = useState<Cotacao | null>(null)
 
   useEffect(() => {
-    // Simula carregamento da API
-    setTimeout(() => {
-      setCotacoes(mockCotacoes)
-      setLoading(false)
-    }, 500)
+    fetchCotacoes()
   }, [])
+
+  const fetchCotacoes = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await fetch("http://localhost:8080/leads", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const mappedData = data.map((d: any) => ({
+          id: `COT-${d.id}`,
+          clienteNome: d.nome,
+          email: d.empresa || "Não informado", 
+          telefone: d.telefone,
+          tipoServico: d.tipoServico,
+          origem: "N/A",
+          destino: "N/A",
+          descricao: d.mensagem || "Sem mensagem",
+          status: d.status || "PENDENTE",
+          dataCriacao: d.dataSolicitacao
+        }))
+        setCotacoes(mappedData)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredCotacoes = cotacoes.filter((cotacao) => {
     const matchesSearch = 
@@ -127,6 +160,7 @@ export default function CotacoesPage() {
     return matchesSearch && matchesStatus
   })
 
+  // We are visually hiding the status update for now since the backend doesn't have an endpoint for it yet.
   const handleStatusChange = (cotacaoId: string, newStatus: Cotacao["status"]) => {
     setCotacoes(prev => 
       prev.map(c => c.id === cotacaoId ? { ...c, status: newStatus } : c)
@@ -141,6 +175,7 @@ export default function CotacoesPage() {
       </div>
     )
   }
+
 
   return (
     <div className="space-y-6">
@@ -296,6 +331,58 @@ export default function CotacoesPage() {
           </div>
         )}
       </div>
+
+      {/* Detalhes Modal */}
+      <Dialog open={!!selectedCotacao} onOpenChange={(open) => !open && setSelectedCotacao(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Detalhes da Cotação</DialogTitle>
+          </DialogHeader>
+          {selectedCotacao && (
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center gap-3 border-b pb-4">
+                <Badge className={statusColors[selectedCotacao.status]}>
+                  {statusLabels[selectedCotacao.status]}
+                </Badge>
+                <span className="font-mono text-sm text-muted-foreground">{selectedCotacao.id}</span>
+                <span className="text-sm text-muted-foreground ml-auto">
+                  {new Date(selectedCotacao.dataCriacao).toLocaleString("pt-BR")}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Cliente / Empresa</p>
+                  <p className="text-base font-semibold">{selectedCotacao.clienteNome}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Serviço Solicitado</p>
+                  <p className="text-base text-primary font-medium">{selectedCotacao.tipoServico}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Empresa informada (E-mail p/ Log)</p>
+                  <p className="text-sm flex items-center gap-2 text-foreground">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    {selectedCotacao.email}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Telefone</p>
+                  <p className="text-sm flex items-center gap-2 text-foreground">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    {selectedCotacao.telefone}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-secondary/20 p-4 rounded-xl border border-border">
+                <p className="text-sm font-medium text-muted-foreground mb-3">Mensagem do Cliente:</p>
+                <p className="text-sm text-foreground whitespace-pre-wrap">{selectedCotacao.descricao}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

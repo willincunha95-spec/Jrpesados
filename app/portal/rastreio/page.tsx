@@ -1,65 +1,78 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPin, Truck, Clock, Video, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-// Mock data for demo
-const mockRastreios = [
-  {
-    id: 1,
-    placa: "ABC-1234",
-    motorista: "João Silva",
-    origem: "São Paulo, SP",
-    destino: "Campinas, SP",
-    status: "Em Trânsito",
-    latitude: -23.5505,
-    longitude: -46.6333,
-    ultimaAtualizacao: "Há 5 minutos",
-    previsaoChegada: "Hoje, 18:00",
-    distanciaRestante: "45 km",
-    tempoRestante: "50 min",
-    urlVideo: null,
-  },
-  {
-    id: 2,
-    placa: "XYZ-5678",
-    motorista: "Carlos Santos",
-    origem: "Santos, SP",
-    destino: "São Paulo, SP",
-    status: "Carregando",
-    latitude: -23.9608,
-    longitude: -46.3336,
-    ultimaAtualizacao: "Há 15 minutos",
-    previsaoChegada: "Amanhã, 10:00",
-    distanciaRestante: "72 km",
-    tempoRestante: "1h 30min",
-    urlVideo: "https://example.com/video",
-  },
-]
+interface Rastreio {
+  id: number
+  placa: string
+  modelo: string
+  latitude: number
+  longitude: number
+  origem: string
+  destino: string
+  statusCarga: string
+  previsaoChegada: string
+}
 
 export default function RastreioPage() {
-  const [selectedRastreio, setSelectedRastreio] = useState(mockRastreios[0])
+  const [rastreios, setRastreios] = useState<Rastreio[]>([])
+  const [selectedRastreio, setSelectedRastreio] = useState<Rastreio | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+
+  useEffect(() => {
+    const fetchRastreios = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch(`${API_URL}/veiculos/meus-rastreios`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setRastreios(data)
+          if (data.length > 0) setSelectedRastreio(data[0])
+        }
+      } catch (error) {
+        console.error("Erro fetch rastreio:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRastreios()
+  }, [])
+
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando rastreio...</div>
+
+  if (rastreios.length === 0) {
+    return (
+      <div className="p-12 text-center border-2 border-dashed border-border rounded-2xl">
+        <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <h2 className="text-xl font-bold text-foreground">Nenhuma carga em rastreio</h2>
+        <p className="text-muted-foreground">Você não possui veículos vinculados a locações ativas no momento.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-display font-bold text-foreground">Rastreio de Cargas</h1>
-        <p className="text-muted-foreground mt-1">
-          Acompanhe suas cargas em tempo real
-        </p>
+        <p className="text-muted-foreground mt-1">Acompanhe suas cargas em tempo real</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Lista de rastreios */}
         <div className="space-y-4">
           <h2 className="font-semibold text-foreground">Cargas Ativas</h2>
-          {mockRastreios.map((rastreio) => (
+          {rastreios.map((rastreio) => (
             <button
               key={rastreio.id}
               onClick={() => setSelectedRastreio(rastreio)}
               className={`w-full p-4 rounded-xl border text-left transition-all ${
-                selectedRastreio.id === rastreio.id
+                selectedRastreio?.id === rastreio.id
                   ? "border-primary bg-primary/5"
                   : "border-border bg-card hover:border-primary/50"
               }`}
@@ -71,123 +84,107 @@ export default function RastreioPage() {
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{rastreio.placa}</p>
-                    <p className="text-xs text-muted-foreground">{rastreio.motorista}</p>
+                    <p className="text-xs text-muted-foreground">{rastreio.modelo}</p>
                   </div>
                 </div>
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  rastreio.status === "Em Trânsito" 
-                    ? "bg-green-500/10 text-green-500" 
-                    : "bg-blue-500/10 text-blue-500"
-                }`}>
-                  {rastreio.status}
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500`}>
+                  {rastreio.statusCarga}
                 </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                <p>{rastreio.origem}</p>
-                <p className="text-primary font-medium">{rastreio.destino}</p>
+                <p>{rastreio.origem || "Não informada"}</p>
+                <p className="text-primary font-medium">{rastreio.destino || "Não informado"}</p>
               </div>
             </button>
           ))}
         </div>
 
         {/* Mapa placeholder */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Map container */}
-          <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="h-80 bg-gradient-to-br from-secondary to-secondary/50 relative flex items-center justify-center">
-              {/* Placeholder map visualization */}
-              <div className="absolute inset-0 opacity-10">
-                <svg viewBox="0 0 400 300" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
-                  <defs>
-                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#grid)" />
-                </svg>
-              </div>
-              
-              {/* Truck marker */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg animate-pulse">
-                  <Truck className="h-8 w-8 text-primary-foreground" />
-                </div>
-                <div className="mt-4 px-4 py-2 bg-card rounded-lg border border-border shadow-lg">
-                  <p className="text-sm font-medium text-foreground">{selectedRastreio.placa}</p>
-                  <p className="text-xs text-muted-foreground">{selectedRastreio.ultimaAtualizacao}</p>
-                </div>
-              </div>
-
-              {/* Route line indicator */}
-              <div className="absolute bottom-4 left-4 right-4 h-2 bg-background/50 rounded-full overflow-hidden">
-                <div className="h-full w-2/3 bg-primary rounded-full" />
-              </div>
-            </div>
-          </div>
-
-          {/* Details cards */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Navigation className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Rota</p>
-                  <p className="font-medium text-foreground">{selectedRastreio.origem}</p>
-                  <p className="text-sm text-primary">{selectedRastreio.destino}</p>
+        {selectedRastreio && (
+          <div className="lg:col-span-2 space-y-4">
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="h-[400px] w-full bg-secondary/20 relative">
+                {selectedRastreio.latitude && selectedRastreio.longitude ? (
+                  <iframe
+                    title="Mapa Rastreamento"
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    scrolling="no"
+                    marginHeight={0}
+                    marginWidth={0}
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedRastreio.longitude - 0.05},${selectedRastreio.latitude - 0.05},${selectedRastreio.longitude + 0.05},${selectedRastreio.latitude + 0.05}&layer=mapnik&marker=${selectedRastreio.latitude},${selectedRastreio.longitude}`}
+                    className="absolute inset-0 z-0"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-gradient-to-br from-secondary to-secondary/50">
+                    <MapPin className="h-12 w-12 mb-4 opacity-50" />
+                    <p className="font-medium text-foreground">Aguardando sinal do GPS</p>
+                    <p className="text-sm">O veículo ainda não reportou sua localização</p>
+                  </div>
+                )}
+                
+                {/* Floating Info Box OVER the map */}
+                <div className="absolute bottom-4 left-4 z-10 flex flex-col items-center">
+                  <div className="px-4 py-2 bg-card/90 backdrop-blur-sm rounded-lg border border-border shadow-lg flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                      <Truck className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">{selectedRastreio.placa}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {selectedRastreio.latitude ? "Sinal em tempo real" : "Aguardando sincronização"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Clock className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Previsão de Chegada</p>
-                  <p className="font-medium text-foreground">{selectedRastreio.previsaoChegada}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedRastreio.distanciaRestante} - {selectedRastreio.tempoRestante}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Coordenadas</p>
-                  <p className="font-medium text-foreground text-sm font-mono">
-                    {selectedRastreio.latitude.toFixed(4)}, {selectedRastreio.longitude.toFixed(4)}
-                  </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border border-border bg-card">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Navigation className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Rota</p>
+                    <p className="font-medium text-foreground">{selectedRastreio.origem || "-"}</p>
+                    <p className="text-sm text-primary">{selectedRastreio.destino || "-"}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-4 rounded-xl border border-border bg-card">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Video className="h-5 w-5 text-primary" />
+              <div className="p-4 rounded-xl border border-border bg-card">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Previsão de Chegada</p>
+                    <p className="font-medium text-foreground">{selectedRastreio.previsaoChegada || "A definir"}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Câmera da Carga</p>
-                  {selectedRastreio.urlVideo ? (
-                    <Button size="sm" variant="outline" className="mt-2">
-                      Ver ao vivo
-                    </Button>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Não disponível</p>
-                  )}
+              </div>
+
+              <div className="p-4 rounded-xl border border-border bg-card">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Coordenadas</p>
+                    <p className="font-medium text-foreground text-sm font-mono">
+                      {selectedRastreio.latitude && selectedRastreio.longitude 
+                        ? `${selectedRastreio.latitude.toFixed(5)}, ${selectedRastreio.longitude.toFixed(5)}`
+                        : "Sinal Indisponível"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

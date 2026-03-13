@@ -12,7 +12,10 @@ public interface VeiculoRepository extends JpaRepository<Veiculo , Long> {
     Optional<Veiculo> findByPlaca(String placa);
 
 
-    //Lista de todos os veiculos de um dono
-    Optional<Veiculo> findByProprietarioId(String proprietarioId);
+    // Lista de todos os veiculos de um dono
+    java.util.List<Veiculo> findByProprietarioId(String proprietarioId);
 
+    java.util.List<Veiculo> findByProprietarioEmail(String email);
+
+    long countByStatusCarga(com.Jrpesados.Jrpesados.domain.StatusEncomenda status);
 }

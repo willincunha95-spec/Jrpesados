@@ -23,6 +23,10 @@ public class RentalService {
 
     @Transactional
     public Locacao abrirLocacao(Locacao locacao) {
+        if (locacao.getEquipamento() == null || locacao.getEquipamento().getId() == null) {
+            throw new RuntimeException("Equipamento não informado para a locação.");
+        }
+
         Equipamento eq = equipamentoRepository.findById(locacao.getEquipamento().getId())
                 .orElseThrow(() -> new RuntimeException("Equipamento não encontrado!"));
 

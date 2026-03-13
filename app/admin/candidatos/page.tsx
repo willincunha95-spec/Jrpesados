@@ -62,6 +62,26 @@ export default function CandidatosPage() {
     }
   }
 
+  const handleUpdateStatus = async (id: number, action: "aprovar" | "rejeitar") => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await fetch(`http://localhost:8080/trabalhe-conosco/${id}/${action}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Erro ao ${action} candidato.`)
+      }
+
+      await fetchCandidatos() // Refresh list
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
   const pendentes = candidatos.filter(c => c.status === "PENDENTE")
   const aprovados = candidatos.filter(c => c.status === "APROVADO")
   const rejeitados = candidatos.filter(c => c.status === "REJEITADO")
@@ -157,7 +177,7 @@ export default function CandidatosPage() {
 
                 <div className="flex items-center gap-2">
                   <a
-                    href={candidato.linkCurriculo}
+                    href={candidato.linkCurriculo?.startsWith("http") ? candidato.linkCurriculo : `http://localhost:8080${candidato.linkCurriculo}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -168,11 +188,19 @@ export default function CandidatosPage() {
                   </a>
                   {candidato.status === "PENDENTE" && (
                     <>
-                      <Button size="sm" className="bg-green-500 hover:bg-green-600">
+                      <Button 
+                        size="sm" 
+                        className="bg-green-500 hover:bg-green-600"
+                        onClick={() => handleUpdateStatus(candidato.id, "aprovar")}
+                      >
                         <Check className="h-4 w-4 mr-1" />
                         Aprovar
                       </Button>
-                      <Button size="sm" variant="destructive">
+                      <Button 
+                        size="sm" 
+                        variant="destructive"
+                        onClick={() => handleUpdateStatus(candidato.id, "rejeitar")}
+                      >
                         <X className="h-4 w-4 mr-1" />
                         Rejeitar
                       </Button>

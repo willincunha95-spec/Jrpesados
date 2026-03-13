@@ -39,19 +39,31 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/equipamentos/catalogo").permitAll()
                         .requestMatchers(HttpMethod.POST, "/trabalhe-conosco").permitAll()
                         .requestMatchers(HttpMethod.POST, "/leads/solicitar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/rastreio/atualizar").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
 
                         // --- REGRAS DO ADMIN (Seu pai) ---
+                        .requestMatchers(HttpMethod.GET, "/users/clientes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/leads").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/veiculos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/veiculos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/veiculos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/veiculos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/veiculos/admin/dashboard").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/trabalhe-conosco").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/tracking/sync").hasRole("ADMIN")
+                        
+                        .requestMatchers(HttpMethod.POST, "/equipamentos/upload").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/equipamentos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/equipamentos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/equipamentos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/financeiro/todas").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/financeiro/registrar").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/financeiro/pdf/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/financeiro/saldo").permitAll()
+                        
+                        .requestMatchers(HttpMethod.POST, "/locacoes/abrir").hasRole("ADMIN")
+                        
+                        .requestMatchers(HttpMethod.GET, "/financeiro/todas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/financeiro/registrar").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/financeiro/pdf/**").permitAll() // NF PDF access
+                        .requestMatchers(HttpMethod.GET, "/financeiro/saldo").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/financeiro/meu-historico").hasRole("CLIENT")
 
                         // --- REGRAS DO CLIENTE (User Logado) ---
                         .requestMatchers(HttpMethod.GET, "/veiculos/meu-perfil").hasRole("USER")

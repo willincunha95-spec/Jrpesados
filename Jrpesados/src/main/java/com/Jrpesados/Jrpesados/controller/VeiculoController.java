@@ -23,13 +23,11 @@ public class VeiculoController {
      */
     @GetMapping("/meu-perfil")
     public ResponseEntity<PerfilClienteDTO> verMeuPerfil(Authentication authentication) {
-        // authentication.getName() pega o e-mail do usuário logado via Token
         return ResponseEntity.ok(veiculoService.obterDadosPerfil(authentication.getName()));
     }
 
     /**
      * RASTREIO CLIENTE: Lista simplificada de posições para o mapa do cliente.
-     * Esse é o método que estava com erro de nome (D maiúsculo).
      */
     @GetMapping("/meus-rastreios")
     public ResponseEntity<List<VeiculoRastreioDTO>> listarMeusRastreios(Authentication authentication) {
@@ -38,7 +36,7 @@ public class VeiculoController {
     }
 
     /**
-     * GPS MOTORISTA: Rota completa com instruções técnicas (Exclusivo Admin/Motorista).
+     * GPS MOTORISTA: Rota completa com instruções técnicas.
      */
     @GetMapping("/{id}/rota-motorista")
     public ResponseEntity<RotaMotoristaDTO> verRotaMotorista(@PathVariable Long id) {
@@ -46,7 +44,7 @@ public class VeiculoController {
     }
 
     /**
-     * DASHBOARD ADMIN: Resumo de métricas para o seu pai.
+     * DASHBOARD ADMIN: Resumo de métricas.
      */
     @GetMapping("/admin/dashboard")
     public ResponseEntity<DashboardAdminDTO> verDashboard() {
@@ -54,7 +52,7 @@ public class VeiculoController {
     }
 
     /**
-     * ATUALIZAR STATUS: Seu pai atualiza onde a carga está e quando chega.
+     * ATUALIZAR STATUS: Admin atualiza onde a carga está e quando chega.
      */
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> atualizarStatus(
@@ -78,7 +76,30 @@ public class VeiculoController {
      * CRUD BÁSICO: Cadastrar novo veículo (Admin).
      */
     @PostMapping
-    public ResponseEntity<Veiculo> cadastrar(@RequestBody Veiculo veiculo) {
-        return ResponseEntity.ok(veiculoService.salvar(veiculo));
+    public ResponseEntity cadastrar(@RequestBody Veiculo veiculo) {
+        try {
+            return ResponseEntity.ok(veiculoService.salvar(veiculo));
+        } catch (Exception e) {
+            System.err.println("Erro ao cadastrar veículo: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao cadastrar veículo: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity atualizar(@PathVariable Long id, @RequestBody VeiculoUpdateDTO data) {
+        try {
+            return ResponseEntity.ok(veiculoService.atualizarVeiculo(id, data));
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar veículo: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao atualizar veículo: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        veiculoService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

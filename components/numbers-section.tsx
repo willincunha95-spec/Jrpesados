@@ -1,10 +1,10 @@
-import { ShieldCheck, Wrench, Users, Calendar } from "lucide-react"
+import { ShieldCheck, Wrench, Users, Calendar, Truck } from "lucide-react"
 
 const numbers = [
   { icon: Calendar, value: "16", suffix: "+", label: "anos de experiência" },
-  { icon: Wrench, value: "100", suffix: "+", label: "equipamentos disponíveis" },
-  { icon: Users, value: "250", suffix: "+", label: "especialistas em operação" },
-  { icon: ShieldCheck, value: "50", suffix: "+", label: "segmentos atendidos" },
+  { icon: Wrench, value: "30", suffix: "+", label: "equipamentos disponíveis" },
+  { icon: Users, value: "20", suffix: "+", label: "especialistas em operação" },
+  { icon: Truck, value: "15", suffix: "+", label: "caminhões na frota" },
 ]
 
 export function NumbersSection() {

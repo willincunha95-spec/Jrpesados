@@ -13,7 +13,8 @@ import {
   Loader2,
   Calendar,
   User,
-  Briefcase
+  Briefcase,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -319,6 +320,7 @@ export default function FinanceiroPage() {
                       <th className="p-3 font-medium text-muted-foreground">Valor</th>
                       <th className="p-3 font-medium text-muted-foreground">Status</th>
                       <th className="p-3 font-medium text-muted-foreground text-center">NF</th>
+                      <th className="p-3 font-medium text-muted-foreground text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -358,6 +360,27 @@ export default function FinanceiroPage() {
                               onClick={() => handleDownloadPdf(t.id)}
                             >
                               <Download className="h-4 w-4" />
+                            </Button>
+                          </td>
+                          <td className="p-3 text-right">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={async () => {
+                                if (confirm("Excluir este lançamento?")) {
+                                  try {
+                                    const token = localStorage.getItem("token")
+                                    const res = await fetch(`http://localhost:8080/financeiro/${t.id}`, {
+                                      method: "DELETE",
+                                      headers: { "Authorization": `Bearer ${token}` }
+                                    })
+                                    if (res.ok) fetchTransacoes()
+                                  } catch (e) { console.error(e) }
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </td>
                         </tr>

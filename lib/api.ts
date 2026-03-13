@@ -9,6 +9,7 @@ export interface Equipamento {
   numeroSerie: string
   valorDiaria: number
   status: "DISPONIVEL" | "LOCADO" | "MANUTENCAO"
+  imageUrl?: string
 }
 
 export interface CotacaoRequest {
@@ -214,15 +215,25 @@ export function getUserFromToken(): { email: string; role: string } | null {
   if (typeof window === "undefined") return null
   
   const token = localStorage.getItem("token")
-  if (!token) return null
+  if (!token || !token.includes(".")) return null
   
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]))
+    const base64Payload = token.split(".")[1]
+    let payloadText = ""
+    
+    if (typeof window !== "undefined") {
+      payloadText = atob(base64Payload)
+    } else {
+      payloadText = Buffer.from(base64Payload, "base64").toString()
+    }
+    
+    const payload = JSON.parse(payloadText)
     return {
       email: payload.sub,
       role: payload.role || "CLIENT",
     }
-  } catch {
+  } catch (error) {
+    console.error("Erro ao ler token:", error)
     return null
   }
 }

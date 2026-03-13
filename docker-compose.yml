@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: jrpesados-db
+    environment:
+      POSTGRES_DB: jrpesados_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: JRP#92!wL_z8$$Kq26
+    ports:
+      - "5479:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - jrpesados-network
+
+  backend:
+    build: ./Jrpesados
+    container_name: jrpesados-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/jrpesados_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=JRP#92!wL_z8$$Kq26
+      - JWT_SECRET=sua-chave-secreta-alterar-no-producao
+    depends_on:
+      - db
+    networks:
+      - jrpesados-network
+
+  frontend:
+    build: .
+    container_name: jrpesados-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.jrpesados.com.br
+    depends_on:
+      - backend
+    networks:
+      - jrpesados-network
+
+networks:
+  jrpesados-network:
+    driver: bridge
+
+volumes:
+  pgdata:

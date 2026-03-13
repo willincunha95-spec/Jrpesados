@@ -746,7 +746,7 @@ function HeroSection() {
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         className: "text-3xl font-display font-bold text-primary",
-                                                        children: "100+"
+                                                        children: "30+"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/hero-section.tsx",
                                                         lineNumber: 76,
@@ -1785,13 +1785,10 @@ function EquipmentCatalog() {
                     const res = await fetch("".concat(API_URL, "/equipamentos/catalogo"));
                     if (res.ok) {
                         const data = await res.json();
-                        if (data.length > 0) {
-                            setEquipamentos(data);
-                        }
+                        setEquipamentos(data);
                     }
                 } catch (error) {
-                    // Use mock data if API is not available
-                    console.log("Using mock data - API not available");
+                    console.error("Erro fetch catalogo:", error);
                 } finally{
                     setLoading(false);
                 }
@@ -1817,7 +1814,7 @@ function EquipmentCatalog() {
                             children: "Nosso Catálogo"
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 119,
+                            lineNumber: 116,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1825,7 +1822,7 @@ function EquipmentCatalog() {
                             children: "Equipamentos para Locação"
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 122,
+                            lineNumber: 119,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1833,13 +1830,13 @@ function EquipmentCatalog() {
                             children: "Confira nossa frota completa de veículos e equipamentos disponíveis para locação. Todos em perfeito estado de conservação e com manutenção em dia."
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 125,
+                            lineNumber: 122,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/equipment-catalog.tsx",
-                    lineNumber: 118,
+                    lineNumber: 115,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1852,7 +1849,7 @@ function EquipmentCatalog() {
                             children: "Todos"
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 133,
+                            lineNumber: 130,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1862,7 +1859,7 @@ function EquipmentCatalog() {
                             children: "Disponíveis"
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 140,
+                            lineNumber: 137,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1872,13 +1869,13 @@ function EquipmentCatalog() {
                             children: "Locados"
                         }, void 0, false, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 147,
+                            lineNumber: 144,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/equipment-catalog.tsx",
-                    lineNumber: 132,
+                    lineNumber: 129,
                     columnNumber: 9
                 }, this),
                 loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1887,12 +1884,12 @@ function EquipmentCatalog() {
                         className: "h-8 w-8 animate-spin text-primary"
                     }, void 0, false, {
                         fileName: "[project]/components/equipment-catalog.tsx",
-                        lineNumber: 158,
+                        lineNumber: 155,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/equipment-catalog.tsx",
-                    lineNumber: 157,
+                    lineNumber: 154,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "grid sm:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -1905,12 +1902,20 @@ function EquipmentCatalog() {
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "h-48 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative",
                                     children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
+                                        equipamento.imageUrl ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                            src: equipamento.imageUrl.startsWith("http") ? equipamento.imageUrl : (__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || "http://localhost:8080") + equipamento.imageUrl,
+                                            className: "w-full h-full object-cover",
+                                            alt: equipamento.nome
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/equipment-catalog.tsx",
+                                            lineNumber: 171,
+                                            columnNumber: 23
+                                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
                                             className: "h-20 w-20 text-primary/30 group-hover:text-primary/50 transition-colors"
                                         }, void 0, false, {
                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                            lineNumber: 173,
-                                            columnNumber: 21
+                                            lineNumber: 177,
+                                            columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "absolute top-4 right-4",
@@ -1919,18 +1924,18 @@ function EquipmentCatalog() {
                                                 children: status.label
                                             }, void 0, false, {
                                                 fileName: "[project]/components/equipment-catalog.tsx",
-                                                lineNumber: 175,
+                                                lineNumber: 180,
                                                 columnNumber: 23
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                            lineNumber: 174,
+                                            lineNumber: 179,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/equipment-catalog.tsx",
-                                    lineNumber: 172,
+                                    lineNumber: 169,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1941,7 +1946,7 @@ function EquipmentCatalog() {
                                             children: equipamento.nome
                                         }, void 0, false, {
                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                            lineNumber: 180,
+                                            lineNumber: 185,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1953,7 +1958,7 @@ function EquipmentCatalog() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                            lineNumber: 183,
+                                            lineNumber: 188,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1966,7 +1971,7 @@ function EquipmentCatalog() {
                                                             children: "Valor diária"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                                            lineNumber: 189,
+                                                            lineNumber: 194,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1977,13 +1982,13 @@ function EquipmentCatalog() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                                            lineNumber: 190,
+                                                            lineNumber: 195,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/equipment-catalog.tsx",
-                                                    lineNumber: 188,
+                                                    lineNumber: 193,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1994,47 +1999,47 @@ function EquipmentCatalog() {
                                                         children: equipamento.status === "DISPONIVEL" ? "Solicitar" : "Indisponível"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/equipment-catalog.tsx",
-                                                        lineNumber: 195,
+                                                        lineNumber: 200,
                                                         columnNumber: 25
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/equipment-catalog.tsx",
-                                                    lineNumber: 194,
+                                                    lineNumber: 199,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/equipment-catalog.tsx",
-                                            lineNumber: 187,
+                                            lineNumber: 192,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/equipment-catalog.tsx",
-                                    lineNumber: 179,
+                                    lineNumber: 184,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, equipamento.id, true, {
                             fileName: "[project]/components/equipment-catalog.tsx",
-                            lineNumber: 167,
+                            lineNumber: 164,
                             columnNumber: 17
                         }, this);
                     })
                 }, void 0, false, {
                     fileName: "[project]/components/equipment-catalog.tsx",
-                    lineNumber: 161,
+                    lineNumber: 158,
                     columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/equipment-catalog.tsx",
-            lineNumber: 117,
+            lineNumber: 114,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/equipment-catalog.tsx",
-        lineNumber: 116,
+        lineNumber: 113,
         columnNumber: 5
     }, this);
 }
@@ -3295,7 +3300,7 @@ function WorkWithUs() {
         e.preventDefault();
         setLoading(true);
         try {
-            // Use FormData to support file upload
+            // User FormData to support file upload again
             const data = new FormData();
             data.append("nome", formData.nome);
             data.append("email", formData.email);
@@ -3306,7 +3311,6 @@ function WorkWithUs() {
             const API_URL = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
             const res = await fetch("".concat(API_URL, "/trabalhe-conosco"), {
                 method: "POST",
-                // Note: browser sets Content-Type to multipart/form-data automatically with boundary
                 body: data
             });
             if (res.ok) {
@@ -3318,9 +3322,12 @@ function WorkWithUs() {
                     cargoPretendido: "",
                     linkCurriculo: ""
                 });
+            } else {
+                const errText = await res.text();
+                alert("Erro ao enviar: " + errText);
             }
         } catch (error) {
-            setSuccess(true);
+            alert("Erro de conexão: " + error.message);
         } finally{
             setLoading(false);
         }
@@ -3341,7 +3348,7 @@ function WorkWithUs() {
                                 children: "Faça Parte do Time"
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 80,
+                                lineNumber: 82,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -3349,7 +3356,7 @@ function WorkWithUs() {
                                 children: "Trabalhe Conosco"
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 83,
+                                lineNumber: 85,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3357,13 +3364,13 @@ function WorkWithUs() {
                                 children: "Estamos sempre em busca de profissionais qualificados para fazer parte da nossa equipe. Confira as vagas disponíveis e envie seu currículo."
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 86,
+                                lineNumber: 88,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/work-with-us.tsx",
-                        lineNumber: 79,
+                        lineNumber: 81,
                         columnNumber: 11
                     }, this),
                     success ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3375,12 +3382,12 @@ function WorkWithUs() {
                                     className: "h-10 w-10 text-green-500"
                                 }, void 0, false, {
                                     fileName: "[project]/components/work-with-us.tsx",
-                                    lineNumber: 95,
+                                    lineNumber: 97,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 94,
+                                lineNumber: 96,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -3388,7 +3395,7 @@ function WorkWithUs() {
                                 children: "Currículo Enviado!"
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 97,
+                                lineNumber: 99,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3396,7 +3403,7 @@ function WorkWithUs() {
                                 children: "Recebemos seu currículo. Analisaremos seu perfil e entraremos em contato caso haja uma vaga compatível."
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 100,
+                                lineNumber: 102,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -3404,13 +3411,13 @@ function WorkWithUs() {
                                 children: "Enviar Outro Currículo"
                             }, void 0, false, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 104,
+                                lineNumber: 106,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/work-with-us.tsx",
-                        lineNumber: 93,
+                        lineNumber: 95,
                         columnNumber: 13
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "bg-card border border-border rounded-xl p-8",
@@ -3424,12 +3431,12 @@ function WorkWithUs() {
                                             className: "h-7 w-7 text-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/components/work-with-us.tsx",
-                                            lineNumber: 112,
+                                            lineNumber: 114,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 111,
+                                        lineNumber: 113,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3439,7 +3446,7 @@ function WorkWithUs() {
                                                 children: "Cadastre seu currículo"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 115,
+                                                lineNumber: 117,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3447,19 +3454,19 @@ function WorkWithUs() {
                                                 children: "Preencha os dados abaixo e envie o link do seu currículo"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 118,
+                                                lineNumber: 120,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 114,
+                                        lineNumber: 116,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 110,
+                                lineNumber: 112,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -3477,7 +3484,7 @@ function WorkWithUs() {
                                                         children: "Nome completo"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 127,
+                                                        lineNumber: 129,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -3491,13 +3498,13 @@ function WorkWithUs() {
                                                         required: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 128,
+                                                        lineNumber: 130,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 126,
+                                                lineNumber: 128,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3508,7 +3515,7 @@ function WorkWithUs() {
                                                         children: "E-mail"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 137,
+                                                        lineNumber: 139,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -3523,19 +3530,19 @@ function WorkWithUs() {
                                                         required: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 138,
+                                                        lineNumber: 140,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 136,
+                                                lineNumber: 138,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 125,
+                                        lineNumber: 127,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3549,7 +3556,7 @@ function WorkWithUs() {
                                                         children: "Telefone"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 151,
+                                                        lineNumber: 153,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -3564,13 +3571,13 @@ function WorkWithUs() {
                                                         required: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 152,
+                                                        lineNumber: 154,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 150,
+                                                lineNumber: 152,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3581,7 +3588,7 @@ function WorkWithUs() {
                                                         children: "Cargo pretendido"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 162,
+                                                        lineNumber: 164,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -3596,12 +3603,12 @@ function WorkWithUs() {
                                                                     placeholder: "Selecione"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/work-with-us.tsx",
-                                                                    lineNumber: 170,
+                                                                    lineNumber: 172,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                                lineNumber: 169,
+                                                                lineNumber: 171,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3610,30 +3617,30 @@ function WorkWithUs() {
                                                                         children: pos.label
                                                                     }, pos.value, false, {
                                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                                        lineNumber: 174,
+                                                                        lineNumber: 176,
                                                                         columnNumber: 27
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                                lineNumber: 172,
+                                                                lineNumber: 174,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 163,
+                                                        lineNumber: 165,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 161,
+                                                lineNumber: 163,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 149,
+                                        lineNumber: 151,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3647,7 +3654,7 @@ function WorkWithUs() {
                                                         children: "Link do currículo"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 185,
+                                                        lineNumber: 187,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -3661,13 +3668,13 @@ function WorkWithUs() {
                                                             })
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 186,
+                                                        lineNumber: 188,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 184,
+                                                lineNumber: 186,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3678,7 +3685,7 @@ function WorkWithUs() {
                                                         children: "Anexar Currículo (PDF, Word)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 197,
+                                                        lineNumber: 199,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -3696,19 +3703,19 @@ function WorkWithUs() {
                                                         className: "cursor-pointer file:bg-primary file:text-primary-foreground file:border-0 file:rounded-md file:px-2 file:py-1 hover:file:bg-primary/90"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/work-with-us.tsx",
-                                                        lineNumber: 198,
+                                                        lineNumber: 200,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/work-with-us.tsx",
-                                                lineNumber: 196,
+                                                lineNumber: 198,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 183,
+                                        lineNumber: 185,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3716,7 +3723,7 @@ function WorkWithUs() {
                                         children: "Você pode enviar o link ou anexar o arquivo diretamente"
                                     }, void 0, false, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 210,
+                                        lineNumber: 212,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -3730,7 +3737,7 @@ function WorkWithUs() {
                                                     className: "mr-2 h-4 w-4 animate-spin"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/work-with-us.tsx",
-                                                    lineNumber: 217,
+                                                    lineNumber: 219,
                                                     columnNumber: 23
                                                 }, this),
                                                 "Enviando..."
@@ -3738,35 +3745,35 @@ function WorkWithUs() {
                                         }, void 0, true) : "Enviar Currículo"
                                     }, void 0, false, {
                                         fileName: "[project]/components/work-with-us.tsx",
-                                        lineNumber: 214,
+                                        lineNumber: 216,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/work-with-us.tsx",
-                                lineNumber: 124,
+                                lineNumber: 126,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/work-with-us.tsx",
-                        lineNumber: 109,
+                        lineNumber: 111,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/work-with-us.tsx",
-                lineNumber: 78,
+                lineNumber: 80,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/work-with-us.tsx",
-            lineNumber: 77,
+            lineNumber: 79,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/work-with-us.tsx",
-        lineNumber: 76,
+        lineNumber: 78,
         columnNumber: 5
     }, this);
 }

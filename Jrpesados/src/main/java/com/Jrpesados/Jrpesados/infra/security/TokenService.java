@@ -22,10 +22,12 @@ public class TokenService {
        try{
 
            Algorithm  algorithm = Algorithm.HMAC256(secret);
+           String roleName = user.getRole().toString();
+           System.out.println("Gerando token para: " + user.getEmail() + " com role: " + roleName);
            String token = JWT.create()
                    .withIssuer("auth-api")
                    .withSubject(user.getEmail())
-                   .withClaim("role", user.getRole().name())
+                   .withClaim("role", roleName)
                    .withExpiresAt(generateExperationData())
                    .sign(algorithm);
            return  token;
@@ -45,11 +47,11 @@ public class TokenService {
                     .getSubject();
 
         }catch (com.auth0.jwt.exceptions.JWTVerificationException exception){
+            System.out.println("Erro na verificacao do token JWT: " + exception.getMessage());
             return "";
-
         }
     }
     private Instant generateExperationData(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.ofHours(-3));
+        return LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.ofHours(-3));
     }
 }

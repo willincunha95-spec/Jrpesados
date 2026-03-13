@@ -1,7 +1,14 @@
 {
   "/admin/candidatos/page": "app/admin/candidatos/page.js",
+  "/admin/equipamentos/page": "app/admin/equipamentos/page.js",
   "/admin/financeiro/page": "app/admin/financeiro/page.js",
+  "/admin/frota/page": "app/admin/frota/page.js",
   "/admin/locacoes/page": "app/admin/locacoes/page.js",
+  "/admin/oficina/page": "app/admin/oficina/page.js",
   "/admin/page": "app/admin/page.js",
-  "/page": "app/page.js"
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/portal/locacoes/page": "app/portal/locacoes/page.js",
+  "/portal/page": "app/portal/page.js",
+  "/portal/rastreio/page": "app/portal/rastreio/page.js"
 }

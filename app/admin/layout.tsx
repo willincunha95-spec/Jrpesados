@@ -33,6 +33,7 @@ const sidebarLinks = [
   { href: "/admin/locacoes", label: "Locações", icon: FileText },
   { href: "/admin/equipamentos", label: "Equipamentos", icon: Package },
   { href: "/admin/candidatos", label: "Candidatos", icon: Users },
+  { href: "/admin/cotacoes", label: "Cotações", icon: DollarSign },
   { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ]
 

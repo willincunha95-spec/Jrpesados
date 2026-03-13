@@ -28,13 +28,19 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null && !token.isEmpty()) {
             var email = tokenService.validateToken(token);
+            System.out.println("Token detectado para email: " + email);
             if (!email.isEmpty()) {
                 UserDetails user = userRepository.findByEmail(email);
 
                 if (user != null) {
+                    System.out.println("Usuario encontrado: " + user.getUsername() + " com authorities: " + user.getAuthorities());
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    System.out.println("ERRO: Usuario nao encontrado no banco: " + email);
                 }
+            } else {
+                System.out.println("ERRO: Token invalido ou expirado");
             }
         }
         filterChain.doFilter(request, response);

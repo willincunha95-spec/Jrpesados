@@ -1,5 +1,8 @@
 package com.Jrpesados.Jrpesados.controller;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 
 import com.Jrpesados.Jrpesados.domain.DTO.AuthenticationDTO;
 import com.Jrpesados.Jrpesados.domain.DTO.RegisterDTO;
@@ -30,6 +33,8 @@ public class AuthenticationController {
     private TokenService tokenService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private com.Jrpesados.Jrpesados.service.EmailService emailService;
 
     //Aqui o codigo vai receber por meio de um POST (/login) o login do usuário e sua senha,vai criptografala e
     //  o Spring vai  comparar com a senha salva no banco de dados
@@ -40,7 +45,7 @@ public class AuthenticationController {
 
         User user = (User) auth.getPrincipal();
         // Self-healing the admin account if it was somehow registered as CLIENT
-        if ("admin@jrpesados.com".equals(user.getEmail()) && user.getRole() != UserRole.ADMIN) {
+        if (user.getEmail() != null && user.getEmail().toLowerCase().startsWith("admin@jrpesados.com") && user.getRole() != UserRole.ADMIN) {
             user.setRole(UserRole.ADMIN);
             userRepository.save(user);
         }
@@ -87,13 +92,47 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity forgotPassword(@RequestBody @Valid ForgotPasswordDTO data) {
-        // Simulando envio de e-mail de recuperação
-        if (this.userRepository.findByEmail(data.email()) == null) {
-            // Retornamos OK mesmo se o email não existir por questões de segurança
+        User user = (User) this.userRepository.findByEmail(data.email());
+        if (user == null) {
             return ResponseEntity.ok().build();
         }
         
-        // Aqui entraria a lógica real de gerar token de recuperação e enviar email
+        // Simulação: gera um token UUID curto
+        String token = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
+        userRepository.save(user);
+
+        // Envia o e-mail real
+        try {
+            emailService.enviarEmailRecuperacao(data.email(), token);
+            System.out.println("DEBUG: E-mail de recuperação enviado para " + data.email());
+        } catch (Exception e) {
+            System.err.println("ERRO ao enviar e-mail: " + e.getMessage());
+            // Mesmo se falhar o e-mail, não interrompemos para não dar pista a hackers
+        }
+        
+        return ResponseEntity.ok().build();
+    }
+
+    public record ResetPasswordDTO(String email, String token, String newPassword) {}
+
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordDTO data) {
+        User user = (User) userRepository.findByEmail(data.email());
+        if (user == null || user.getResetToken() == null || !user.getResetToken().equals(data.token())) {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+        }
+
+        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Token expirado.");
+        }
+
+        user.setPassword(passwordEncoder.encode(data.newPassword()));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+        userRepository.save(user);
+
         return ResponseEntity.ok().build();
     }
 

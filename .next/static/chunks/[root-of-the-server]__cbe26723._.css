@@ -462,24 +462,24 @@ img, video {
 }
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 7%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 7%;
+  --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 7%;
+  --popover-foreground: 222 47% 11%;
   --primary: 42 100% 50%;
-  --primary-foreground: 0 0% 7%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 20%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
   --accent: 42 100% 50%;
-  --accent-foreground: 0 0% 7%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
   --ring: 42 100% 50%;
   --chart-1: 42 100% 50%;
   --chart-2: 42 80% 45%;
@@ -694,6 +694,10 @@ body {
   top: 50%;
 }
 
+.z-0 {
+  z-index: 0;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -763,6 +767,10 @@ body {
 
 .ml-2 {
   margin-left: .5rem;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 .mr-1 {
@@ -869,10 +877,6 @@ body {
   height: 4rem;
 }
 
-.h-2 {
-  height: .5rem;
-}
-
 .h-20 {
   height: 5rem;
 }
@@ -917,12 +921,12 @@ body {
   height: 2rem;
 }
 
-.h-80 {
-  height: 20rem;
-}
-
 .h-9 {
   height: 2.25rem;
+}
+
+.h-\[400px\] {
+  height: 400px;
 }
 
 .h-\[500px\] {
@@ -949,8 +953,16 @@ body {
   height: 100vh;
 }
 
+.h-\[600px\] {
+  height: 600px;
+}
+
 .max-h-96 {
   max-height: 24rem;
+}
+
+.max-h-\[90vh\] {
+  max-height: 90vh;
 }
 
 .min-h-\[400px\] {
@@ -997,14 +1009,6 @@ body {
   width: 4rem;
 }
 
-.w-2 {
-  width: .5rem;
-}
-
-.w-2\/3 {
-  width: 66.6667%;
-}
-
 .w-20 {
   width: 5rem;
 }
@@ -1019,10 +1023,6 @@ body {
 
 .w-3\.5 {
   width: .875rem;
-}
-
-.w-32 {
-  width: 8rem;
 }
 
 .w-4 {
@@ -1203,16 +1203,6 @@ body {
 
 .animate-ping {
   animation: 1s cubic-bezier(0, 0, .2, 1) infinite ping;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: .5;
-  }
-}
-
-.animate-pulse {
-  animation: 2s cubic-bezier(.4, 0, .6, 1) infinite pulse;
 }
 
 @keyframes spin {
@@ -1421,6 +1411,10 @@ body {
   white-space: nowrap;
 }
 
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+
 .text-balance {
   text-wrap: balance;
 }
@@ -1462,6 +1456,10 @@ body {
   border-width: 1px;
 }
 
+.border-2 {
+  border-width: 2px;
+}
+
 .border-4 {
   border-width: 4px;
 }
@@ -1493,6 +1491,10 @@ body {
 
 .border-t-2 {
   border-top-width: 2px;
+}
+
+.border-dashed {
+  border-style: dashed;
 }
 
 .border-none {
@@ -1549,6 +1551,10 @@ body {
 
 .border-transparent {
   border-color: rgba(0, 0, 0, 0);
+}
+
+.border-green-500\/20 {
+  border-color: rgba(34, 197, 94, .2);
 }
 
 .border-l-blue-500 {
@@ -1667,10 +1673,6 @@ body {
   background-color: hsl(var(--muted));
 }
 
-.bg-muted-foreground {
-  background-color: hsl(var(--muted-foreground));
-}
-
 .bg-muted\/50 {
   background-color: hsl(var(--muted) / .5);
 }
@@ -1716,6 +1718,10 @@ body {
   background-color: hsl(var(--secondary));
 }
 
+.bg-secondary\/20 {
+  background-color: hsl(var(--secondary) / .2);
+}
+
 .bg-secondary\/30 {
   background-color: hsl(var(--secondary) / .3);
 }
@@ -1739,6 +1745,10 @@ body {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity, 1));
+}
+
+.bg-secondary\/10 {
+  background-color: hsl(var(--secondary) / .1);
 }
 
 .bg-gradient-to-b {
@@ -1772,6 +1782,12 @@ body {
 .from-secondary {
   --tw-gradient-from: hsl(var(--secondary)) var(--tw-gradient-from-position);
   --tw-gradient-to: hsl(var(--secondary) / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-primary\/5 {
+  --tw-gradient-from: hsl(var(--primary) / .05) var(--tw-gradient-from-position);
+  --tw-gradient-to: hsl(var(--primary) / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -1843,6 +1859,10 @@ body {
   padding: 2rem;
 }
 
+.p-0 {
+  padding: 0;
+}
+
 .px-2 {
   padding-left: .5rem;
   padding-right: .5rem;
@@ -1866,6 +1886,11 @@ body {
 .px-8 {
   padding-left: 2rem;
   padding-right: 2rem;
+}
+
+.py-0 {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .py-0\.5 {
@@ -2200,16 +2225,16 @@ body {
   opacity: 0;
 }
 
-.opacity-10 {
-  opacity: .1;
-}
-
 .opacity-50 {
   opacity: .5;
 }
 
 .opacity-70 {
   opacity: .7;
+}
+
+.opacity-20 {
+  opacity: .2;
 }
 
 .mix-blend-multiply {
@@ -2276,6 +2301,12 @@ body {
 
 .backdrop-blur-sm {
   --tw-backdrop-blur: blur(4px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.backdrop-blur-md {
+  --tw-backdrop-blur: blur(12px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
   backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
@@ -2544,6 +2575,10 @@ body {
 
 .hover\:bg-sidebar-accent:hover {
   background-color: hsl(var(--sidebar-accent));
+}
+
+.hover\:bg-primary\/5:hover {
+  background-color: hsl(var(--primary) / .05);
 }
 
 .hover\:text-accent-foreground:hover {

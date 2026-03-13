@@ -15,6 +15,21 @@ public class EquipamentoController {
     @Autowired
     private EquipamentoRepository repository;
 
+    @Autowired
+    private com.Jrpesados.Jrpesados.service.FileService fileService;
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImagem(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        try {
+            String url = fileService.saveFile(file);
+            return ResponseEntity.ok(url);
+        } catch (java.io.IOException e) {
+            System.err.println("Erro no upload: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Erro ao salvar arquivo: " + e.getMessage());
+        }
+    }
+
     /**
      * CATÁLOGO PÚBLICO: Qualquer pessoa pode ver as máquinas no site.
      * Esse é o endpoint que o Rhuan vai usar na aba "Locação".
@@ -30,9 +45,15 @@ public class EquipamentoController {
      * ADMIN: Cadastro de novas máquinas (Guindastes, Empilhadeiras, etc).
      */
     @PostMapping
-    public ResponseEntity<Equipamento> cadastrar(@RequestBody Equipamento equipamento) {
-        Equipamento novoEquipamento = repository.save(equipamento);
-        return ResponseEntity.ok(novoEquipamento);
+    public ResponseEntity<?> cadastrar(@RequestBody Equipamento equipamento) {
+        try {
+            Equipamento novoEquipamento = repository.save(equipamento);
+            return ResponseEntity.ok(novoEquipamento);
+        } catch (Exception e) {
+            System.err.println("Erro ao cadastrar equipamento: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao cadastrar equipamento: " + e.getMessage());
+        }
     }
 
     /**

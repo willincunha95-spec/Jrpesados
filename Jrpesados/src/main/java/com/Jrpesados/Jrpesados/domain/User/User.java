@@ -10,8 +10,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -31,6 +34,7 @@ public class User implements UserDetails {
 
     @Email(message = "O E-mail é invalido")
     @NotBlank( message = "O E-mail é obrigatório!")
+    @Column(unique = true)
     private String email;
 
     @NotBlank(message = "A senha é obrigatória")
@@ -40,6 +44,12 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    private Integer trackingChecksToday = 0;
+    private LocalDate lastTrackingCheckDate;
+
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
 
     public User(String email, String password , UserRole role){
         this.email = email;
@@ -51,7 +61,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Se for ADMIN ou o e-mail mestre, ele tem poder total
-        if (this.role == UserRole.ADMIN || (this.email != null && this.email.equalsIgnoreCase("admin@jrpesados.com"))) {
+        if (this.role == UserRole.ADMIN || (this.email != null && this.email.toLowerCase().startsWith("admin@jrpesados.com"))) {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_MECANIC"),

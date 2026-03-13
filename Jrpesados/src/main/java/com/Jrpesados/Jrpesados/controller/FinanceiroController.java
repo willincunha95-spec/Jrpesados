@@ -71,4 +71,10 @@ public class FinanceiroController {
 
         pdfGeneratorService.exportarNotaFiscal(response, financeiro);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        financeiroService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

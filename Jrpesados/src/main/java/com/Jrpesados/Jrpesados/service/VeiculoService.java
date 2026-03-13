@@ -1,14 +1,18 @@
 package com.Jrpesados.Jrpesados.service;
 
 import com.Jrpesados.Jrpesados.domain.*;
+import com.Jrpesados.Jrpesados.domain.User.User;
+import com.Jrpesados.Jrpesados.domain.User.UserRole;
 import com.Jrpesados.Jrpesados.domain.DTO.*;
 import com.Jrpesados.Jrpesados.repositories.FinanceiroRepository;
 import com.Jrpesados.Jrpesados.repositories.LocacaoRepository;
 import com.Jrpesados.Jrpesados.repositories.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,6 +26,12 @@ public class VeiculoService {
 
     @Autowired
     private FinanceiroRepository financeiroRepository;
+
+    @Autowired
+    private com.Jrpesados.Jrpesados.repositories.UserRepository userRepository;
+
+    @Autowired
+    private com.Jrpesados.Jrpesados.repositories.CandidatoRepository candidatoRepository;
 
     /**
      * PORTAL DO CLIENTE: Dados para a tela de perfil (Equipamentos e Encomendas).
@@ -40,16 +50,16 @@ public class VeiculoService {
                         l.getDataDevolucaoPrevista() != null ? l.getDataDevolucaoPrevista().toString() : "A combinar"
                 )).toList();
 
-        var encomendas = locacoes.stream()
-                .filter(l -> l.getVeiculo() != null)
-                .map(l -> new EncomendaResumoDTO(
-                        l.getVeiculo().getId(),
-                        l.getVeiculo().getPlaca(),
-                        l.getVeiculo().getDescricaoCarga(),
-                        l.getVeiculo().getPesoCarga(),
-                        l.getVeiculo().getUrlStreamVideo(),
-                        l.getVeiculo().getStatusCarga() != null ? l.getVeiculo().getStatusCarga() : StatusEncomenda.AGUARDANDO_COLETA,
-                        l.getVeiculo().getPrevisaoChegada() != null ? l.getVeiculo().getPrevisaoChegada() : "Calculando..."
+        var encomendas = veiculoRepository.findAll().stream()
+                .filter(v -> v.getProprietario() != null && v.getProprietario().getEmail().equals(email))
+                .map(v -> new EncomendaResumoDTO(
+                        v.getId(),
+                        v.getPlaca(),
+                        v.getDescricaoCarga(),
+                        v.getPesoCarga(),
+                        v.getUrlStreamVideo(),
+                        v.getStatusCarga() != null ? v.getStatusCarga() : StatusEncomenda.AGUARDANDO_COLETA,
+                        v.getPrevisaoChegada() != null ? v.getPrevisaoChegada() : "Calculando..."
                 )).toList();
 
         return new PerfilClienteDTO(equipamentos, encomendas, List.of());
@@ -59,17 +69,35 @@ public class VeiculoService {
      * RASTREIO CLIENTE: Busca a lista de veículos ativos de um cliente para o mapa.
      */
     public List<VeiculoRastreioDTO> buscarRastreiosDoCliente(String email) {
-        return locacaoRepository.findAll().stream()
-                .filter(l -> l.getCliente().getEmail().equals(email)
-                        && l.getStatus() == StatusLocacao.ATIVA
-                        && l.getVeiculo() != null)
-                .map(l -> new VeiculoRastreioDTO(
-                        l.getVeiculo().getId(),
-                        l.getVeiculo().getPlaca(),
-                        l.getVeiculo().getModelo(),
-                        l.getVeiculo().getLatitude(),
-                        l.getVeiculo().getLongitude(),
-                        l.getVeiculo().getUrlStreamVideo()
+        User user = (User) userRepository.findByEmail(email);
+        if (user != null) {
+            LocalDate today = LocalDate.now();
+            if (user.getLastTrackingCheckDate() == null || !user.getLastTrackingCheckDate().isEqual(today)) {
+                user.setLastTrackingCheckDate(today);
+                user.setTrackingChecksToday(0);
+            }
+
+            if (user.getRole() == UserRole.CLIENT) {
+                if (user.getTrackingChecksToday() >= 2) {
+                    throw new RuntimeException("Limite de consulta diária atingido (2 vezes). Tente novamente amanhã.");
+                }
+                user.setTrackingChecksToday(user.getTrackingChecksToday() + 1);
+                userRepository.save(user);
+            }
+        }
+
+        return veiculoRepository.findByProprietarioEmail(email).stream()
+                .map(v -> new VeiculoRastreioDTO(
+                        v.getId(),
+                        v.getPlaca(),
+                        v.getModelo(),
+                        v.getLatitude(),
+                        v.getLongitude(),
+                        v.getUrlStreamVideo(),
+                        v.getOrigem(),
+                        v.getDestino(),
+                        v.getStatusCarga() != null ? v.getStatusCarga().toString() : "DISPONIVEL",
+                        v.getPrevisaoChegada()
                 )).toList();
     }
 
@@ -81,33 +109,37 @@ public class VeiculoService {
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado!"));
 
         return new RotaMotoristaDTO(
-                "Garagem JR Pesados",
-                "Destino do Cliente",
+                v.getOrigem() != null ? v.getOrigem() : "Garagem JR Pesados",
+                v.getDestino() != null ? v.getDestino() : "Destino do Cliente",
                 List.of("Posto de Parada 1", "Balança Rodoviária"),
                 "Trecho em obras no km 22",
                 "Entregar mediante assinatura do canhoto."
         );
     }
 
+    @
+            Transactional
+    public void deletar(Long id) {
+        veiculoRepository.deleteById(id);
+    }
+
     /**
-     * DASHBOARD ADMIN: Resumo de métricas para a tela inicial do seu pai.
+     * DASHBOARD ADMIN: Resumo de métricas reais para substituir mocks.
      */
     public DashboardAdminDTO obterMetricasDashboard() {
-        long caminhoesRua = veiculoRepository.findAll().stream()
-                .filter(v -> v.getStatusCarga() == StatusEncomenda.EM_TRANSITO).count();
+        long totalVeiculos = veiculoRepository.count();
+        
+        long veiculosEmRota = veiculoRepository.countByStatusCarga(com.Jrpesados.Jrpesados.domain.StatusEncomenda.EM_TRANSITO);
 
-        long maquinas = locacaoRepository.findAll().stream()
-                .filter(l -> l.getEquipamento() != null && l.getStatus() == StatusLocacao.ATIVA).count();
+        long locacoesAtivas = locacaoRepository.countByStatus(com.Jrpesados.Jrpesados.domain.StatusLocacao.ATIVA);
 
-        long clientes = locacaoRepository.findAll().stream()
-                .filter(l -> l.getStatus() == StatusLocacao.ATIVA)
-                .map(l -> l.getCliente().getId()).distinct().count();
+        long candidatosPendentes = candidatoRepository.count();
 
-        BigDecimal faturamento = financeiroRepository.findAll().stream()
+        BigDecimal faturamentoMensal = financeiroRepository.findAll().stream()
                 .filter(f -> f.getTipo() == TipoMovimentacao.RECEITA)
                 .map(Financeiro::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new DashboardAdminDTO(caminhoesRua, maquinas, clientes, faturamento);
+        return new DashboardAdminDTO(totalVeiculos, veiculosEmRota, locacoesAtivas, candidatosPendentes, faturamentoMensal);
     }
 
     /**
@@ -118,6 +150,31 @@ public class VeiculoService {
         v.setStatusCarga(status);
         v.setPrevisaoChegada(previsao);
         veiculoRepository.save(v);
+    }
+
+    /**
+     * ATUALIZAR VEÍCULO: Admin atualiza placa, motorista, rota, etc.
+     */
+    public Veiculo atualizarVeiculo(Long id, VeiculoUpdateDTO dto) {
+        Veiculo v = veiculoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veículo não encontrado!"));
+
+        if (dto.placa() != null) v.setPlaca(dto.placa());
+        if (dto.modelo() != null) v.setModelo(dto.modelo());
+        if (dto.marca() != null) v.setMarca(dto.marca());
+        if (dto.origem() != null) v.setOrigem(dto.origem());
+        if (dto.destino() != null) v.setDestino(dto.destino());
+        if (dto.previsaoChegada() != null) v.setPrevisaoChegada(dto.previsaoChegada());
+        
+        if (dto.proprietarioId() != null) {
+            if (dto.proprietarioId().isEmpty()) {
+                v.setProprietario(null);
+            } else {
+                userRepository.findById(dto.proprietarioId()).ifPresent(v::setProprietario);
+            }
+        }
+
+        return veiculoRepository.save(v);
     }
 
     // Métodos Auxiliares

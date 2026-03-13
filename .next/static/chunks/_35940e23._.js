@@ -418,6 +418,7 @@ function EquipamentosAdminPage() {
     const [filter, setFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("all");
     const [equipamentos, setEquipamentos] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [editingId, setEditingId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         nome: "",
         marca: "",
@@ -428,6 +429,7 @@ function EquipamentosAdminPage() {
         imageUrl: ""
     });
     const API_URL = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const [selectedFile, setSelectedFile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const fetchEquipamentos = async ()=>{
         try {
             const token = localStorage.getItem("token");
@@ -451,11 +453,59 @@ function EquipamentosAdminPage() {
             fetchEquipamentos();
         }
     }["EquipamentosAdminPage.useEffect"], []);
+    const handleFileUpload = async (file)=>{
+        const formData = new FormData();
+        formData.append("file", file);
+        const token = localStorage.getItem("token");
+        try {
+            const res = await fetch("".concat(API_URL, "/equipamentos/upload"), {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer ".concat(token)
+                },
+                body: formData
+            });
+            if (res.ok) {
+                return await res.text();
+            }
+            const errorText = await res.text();
+            console.error("Erro no upload (".concat(res.status, "):"), errorText);
+            throw new Error(errorText || "Erro no upload");
+        } catch (error) {
+            console.error("Erro upload:", error);
+            alert("Falha no upload da imagem: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+            return null;
+        }
+    };
+    const handleEdit = (eq)=>{
+        setEditingId(eq.id);
+        setFormData({
+            nome: eq.nome || "",
+            marca: eq.marca || "",
+            modelo: eq.modelo || "",
+            numeroSerie: eq.numeroSerie || "",
+            valorDiaria: eq.valorDiaria ? eq.valorDiaria.toString() : "",
+            status: eq.status || "DISPONIVEL",
+            imageUrl: eq.imageUrl || ""
+        });
+        setShowForm(true);
+    };
     const handleSave = async ()=>{
         try {
             const token = localStorage.getItem("token");
+            let imageUrl = formData.imageUrl;
+            if (selectedFile) {
+                const uploadedUrl = await handleFileUpload(selectedFile);
+                if (uploadedUrl) {
+                    imageUrl = uploadedUrl;
+                }
+            }
             const payload = {
+                ...editingId ? {
+                    id: editingId
+                } : {},
                 ...formData,
+                imageUrl,
                 valorDiaria: parseFloat(formData.valorDiaria)
             };
             const res = await fetch("".concat(API_URL, "/equipamentos"), {
@@ -468,6 +518,7 @@ function EquipamentosAdminPage() {
             });
             if (res.ok) {
                 setShowForm(false);
+                setEditingId(null);
                 setFormData({
                     nome: "",
                     marca: "",
@@ -477,13 +528,17 @@ function EquipamentosAdminPage() {
                     status: "DISPONIVEL",
                     imageUrl: ""
                 });
+                setSelectedFile(null);
                 fetchEquipamentos();
             } else {
-                alert("Erro ao salvar equipamento.");
+                const status = res.status;
+                const errorText = await res.text();
+                console.error("Erro ".concat(status, ":"), errorText);
+                alert("Erro ao salvar equipamento (".concat(status, "): ") + (errorText || res.statusText));
             }
         } catch (error) {
             console.error("Erro ao salvar:", error);
-            alert("Erro de conexão ao salvar.");
+            alert("Erro de conexão ao salvar: " + (error instanceof Error ? error.message : String(error)));
         }
     };
     const handleDelete = async (id)=>{
@@ -525,7 +580,7 @@ function EquipamentosAdminPage() {
                                 children: "Equipamentos"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 142,
+                                lineNumber: 203,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -533,13 +588,13 @@ function EquipamentosAdminPage() {
                                 children: "Gerencie o catálogo de equipamentos para locação"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 143,
+                                lineNumber: 204,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 141,
+                        lineNumber: 202,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -549,20 +604,20 @@ function EquipamentosAdminPage() {
                                 className: "h-4 w-4 mr-2"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 148,
+                                lineNumber: 209,
                                 columnNumber: 11
                             }, this),
                             "Novo Equipamento"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 147,
+                        lineNumber: 208,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                lineNumber: 140,
+                lineNumber: 201,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -576,7 +631,7 @@ function EquipamentosAdminPage() {
                                 children: equipamentos.length
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 156,
+                                lineNumber: 217,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -584,13 +639,13 @@ function EquipamentosAdminPage() {
                                 children: "Total"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 157,
+                                lineNumber: 218,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 155,
+                        lineNumber: 216,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -601,7 +656,7 @@ function EquipamentosAdminPage() {
                                 children: totalDisponivel
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 160,
+                                lineNumber: 221,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -609,13 +664,13 @@ function EquipamentosAdminPage() {
                                 children: "Disponíveis"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 161,
+                                lineNumber: 222,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 159,
+                        lineNumber: 220,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -626,7 +681,7 @@ function EquipamentosAdminPage() {
                                 children: totalLocado
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 164,
+                                lineNumber: 225,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -634,13 +689,13 @@ function EquipamentosAdminPage() {
                                 children: "Locados"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 165,
+                                lineNumber: 226,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 163,
+                        lineNumber: 224,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -651,7 +706,7 @@ function EquipamentosAdminPage() {
                                 children: totalManutencao
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 168,
+                                lineNumber: 229,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -659,19 +714,19 @@ function EquipamentosAdminPage() {
                                 children: "Manutenção"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 169,
+                                lineNumber: 230,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 167,
+                        lineNumber: 228,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                lineNumber: 154,
+                lineNumber: 215,
                 columnNumber: 7
             }, this),
             showForm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -679,10 +734,10 @@ function EquipamentosAdminPage() {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                         className: "font-semibold text-foreground mb-4",
-                        children: "Cadastrar Novo Equipamento"
+                        children: editingId ? "Editar Equipamento" : "Cadastrar Novo Equipamento"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 176,
+                        lineNumber: 237,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -695,7 +750,7 @@ function EquipamentosAdminPage() {
                                         children: "Nome"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 179,
+                                        lineNumber: 242,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -707,13 +762,13 @@ function EquipamentosAdminPage() {
                                             })
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 180,
+                                        lineNumber: 243,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 178,
+                                lineNumber: 241,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -723,7 +778,7 @@ function EquipamentosAdminPage() {
                                         children: "Marca"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 187,
+                                        lineNumber: 250,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -735,13 +790,13 @@ function EquipamentosAdminPage() {
                                             })
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 188,
+                                        lineNumber: 251,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 186,
+                                lineNumber: 249,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -751,7 +806,7 @@ function EquipamentosAdminPage() {
                                         children: "Modelo"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 195,
+                                        lineNumber: 258,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -763,13 +818,13 @@ function EquipamentosAdminPage() {
                                             })
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 196,
+                                        lineNumber: 259,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 194,
+                                lineNumber: 257,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -779,7 +834,7 @@ function EquipamentosAdminPage() {
                                         children: "Número de Série"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 203,
+                                        lineNumber: 266,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -791,13 +846,13 @@ function EquipamentosAdminPage() {
                                             })
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 204,
+                                        lineNumber: 267,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 202,
+                                lineNumber: 265,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -807,7 +862,7 @@ function EquipamentosAdminPage() {
                                         children: "Valor Diária (R$)"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 211,
+                                        lineNumber: 274,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -820,13 +875,13 @@ function EquipamentosAdminPage() {
                                             })
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 212,
+                                        lineNumber: 275,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 210,
+                                lineNumber: 273,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -836,7 +891,7 @@ function EquipamentosAdminPage() {
                                         children: "Status"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 220,
+                                        lineNumber: 283,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -851,12 +906,12 @@ function EquipamentosAdminPage() {
                                                     placeholder: "Selecione"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                    lineNumber: 223,
+                                                    lineNumber: 286,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 222,
+                                                lineNumber: 285,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -866,7 +921,7 @@ function EquipamentosAdminPage() {
                                                         children: "Disponível"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                        lineNumber: 226,
+                                                        lineNumber: 289,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -874,7 +929,7 @@ function EquipamentosAdminPage() {
                                                         children: "Locado"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                        lineNumber: 227,
+                                                        lineNumber: 290,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -882,59 +937,80 @@ function EquipamentosAdminPage() {
                                                         children: "Manutenção"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                        lineNumber: 228,
+                                                        lineNumber: 291,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 225,
+                                                lineNumber: 288,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 221,
+                                        lineNumber: 284,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 219,
+                                lineNumber: 282,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "space-y-2 md:col-span-2 lg:col-span-3",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                        children: "Foto do Equipamento (URL ou Caminho local, ex: /images/frota1.jpg)"
+                                        children: "Foto do Equipamento"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 233,
+                                        lineNumber: 296,
                                         columnNumber: 15
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                        placeholder: "Ex: https://... ou /images/foto.jpg",
-                                        value: formData.imageUrl,
-                                        onChange: (e)=>setFormData({
-                                                ...formData,
-                                                imageUrl: e.target.value
-                                            })
-                                    }, void 0, false, {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex gap-4 items-center",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
+                                                type: "file",
+                                                accept: "image/*",
+                                                onChange: (e)=>{
+                                                    var _e_target_files;
+                                                    return setSelectedFile(((_e_target_files = e.target.files) === null || _e_target_files === void 0 ? void 0 : _e_target_files[0]) || null);
+                                                },
+                                                className: "bg-card"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/admin/equipamentos/page.tsx",
+                                                lineNumber: 298,
+                                                columnNumber: 17
+                                            }, this),
+                                            formData.imageUrl && !selectedFile && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "text-xs text-muted-foreground",
+                                                children: [
+                                                    "Foto atual: ",
+                                                    formData.imageUrl
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/admin/equipamentos/page.tsx",
+                                                lineNumber: 305,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 234,
+                                        lineNumber: 297,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 232,
+                                lineNumber: 295,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 177,
+                        lineNumber: 240,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -945,7 +1021,7 @@ function EquipamentosAdminPage() {
                                 children: "Salvar Equipamento"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 242,
+                                lineNumber: 311,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -954,19 +1030,19 @@ function EquipamentosAdminPage() {
                                 children: "Cancelar"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 243,
+                                lineNumber: 312,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 241,
+                        lineNumber: 310,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                lineNumber: 175,
+                lineNumber: 236,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -979,7 +1055,7 @@ function EquipamentosAdminPage() {
                         children: "Todos"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 250,
+                        lineNumber: 319,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -989,7 +1065,7 @@ function EquipamentosAdminPage() {
                         children: "Disponíveis"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 257,
+                        lineNumber: 326,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -999,7 +1075,7 @@ function EquipamentosAdminPage() {
                         children: "Locados"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 264,
+                        lineNumber: 333,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1009,13 +1085,13 @@ function EquipamentosAdminPage() {
                         children: "Manutenção"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                        lineNumber: 271,
+                        lineNumber: 340,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                lineNumber: 249,
+                lineNumber: 318,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1025,7 +1101,7 @@ function EquipamentosAdminPage() {
                     children: "Carregando equipamentos..."
                 }, void 0, false, {
                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                    lineNumber: 283,
+                    lineNumber: 352,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
                     className: "w-full",
@@ -1039,7 +1115,7 @@ function EquipamentosAdminPage() {
                                         children: "Foto"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 288,
+                                        lineNumber: 357,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1047,7 +1123,7 @@ function EquipamentosAdminPage() {
                                         children: "Equipamento"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 289,
+                                        lineNumber: 358,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1055,7 +1131,7 @@ function EquipamentosAdminPage() {
                                         children: "Série"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 290,
+                                        lineNumber: 359,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1063,7 +1139,7 @@ function EquipamentosAdminPage() {
                                         children: "Valor/Dia"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 291,
+                                        lineNumber: 360,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1071,7 +1147,7 @@ function EquipamentosAdminPage() {
                                         children: "Status"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 292,
+                                        lineNumber: 361,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1079,18 +1155,18 @@ function EquipamentosAdminPage() {
                                         children: "Ações"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                        lineNumber: 293,
+                                        lineNumber: 362,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 287,
+                                lineNumber: 356,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                            lineNumber: 286,
+                            lineNumber: 355,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1102,12 +1178,12 @@ function EquipamentosAdminPage() {
                                     children: "Nenhum equipamento cadastrado."
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                    lineNumber: 299,
+                                    lineNumber: 368,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                lineNumber: 298,
+                                lineNumber: 367,
                                 columnNumber: 17
                             }, this) : filteredEquipamentos.map((eq)=>{
                                 var _eq_valorDiaria;
@@ -1120,17 +1196,17 @@ function EquipamentosAdminPage() {
                                             children: eq.imageUrl ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "w-16 h-12 rounded bg-muted overflow-hidden",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                                    src: eq.imageUrl,
+                                                    src: eq.imageUrl.startsWith("http") ? eq.imageUrl : "".concat(API_URL).concat(eq.imageUrl.startsWith("/") ? "" : "/").concat(eq.imageUrl),
                                                     alt: eq.nome,
                                                     className: "w-full h-full object-cover"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                    lineNumber: 312,
+                                                    lineNumber: 381,
                                                     columnNumber: 29
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 311,
+                                                lineNumber: 380,
                                                 columnNumber: 27
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "w-16 h-12 rounded bg-secondary/50 flex items-center justify-center",
@@ -1138,17 +1214,17 @@ function EquipamentosAdminPage() {
                                                     className: "h-6 w-6 text-muted-foreground"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                    lineNumber: 316,
+                                                    lineNumber: 389,
                                                     columnNumber: 29
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 315,
+                                                lineNumber: 388,
                                                 columnNumber: 27
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 309,
+                                            lineNumber: 378,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1162,7 +1238,7 @@ function EquipamentosAdminPage() {
                                                             children: eq.nome
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                            lineNumber: 323,
+                                                            lineNumber: 396,
                                                             columnNumber: 29
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1174,23 +1250,23 @@ function EquipamentosAdminPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                            lineNumber: 324,
+                                                            lineNumber: 397,
                                                             columnNumber: 29
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                    lineNumber: 322,
+                                                    lineNumber: 395,
                                                     columnNumber: 27
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 321,
+                                                lineNumber: 394,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 320,
+                                            lineNumber: 393,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1198,7 +1274,7 @@ function EquipamentosAdminPage() {
                                             children: eq.numeroSerie
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 328,
+                                            lineNumber: 401,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1211,12 +1287,12 @@ function EquipamentosAdminPage() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 332,
+                                                lineNumber: 405,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 331,
+                                            lineNumber: 404,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1226,12 +1302,12 @@ function EquipamentosAdminPage() {
                                                 children: status.label
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 337,
+                                                lineNumber: 410,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 336,
+                                            lineNumber: 409,
                                             columnNumber: 23
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1242,16 +1318,17 @@ function EquipamentosAdminPage() {
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                                         size: "sm",
                                                         variant: "ghost",
+                                                        onClick: ()=>handleEdit(eq),
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$square$2d$pen$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Edit$3e$__["Edit"], {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                            lineNumber: 342,
+                                                            lineNumber: 415,
                                                             columnNumber: 29
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                        lineNumber: 341,
+                                                        lineNumber: 414,
                                                         columnNumber: 27
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1263,56 +1340,56 @@ function EquipamentosAdminPage() {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                            lineNumber: 350,
+                                                            lineNumber: 423,
                                                             columnNumber: 29
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                        lineNumber: 344,
+                                                        lineNumber: 417,
                                                         columnNumber: 27
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                                lineNumber: 340,
+                                                lineNumber: 413,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 412,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, eq.id, true, {
                                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                                    lineNumber: 308,
+                                    lineNumber: 377,
                                     columnNumber: 21
                                 }, this);
                             })
                         }, void 0, false, {
                             fileName: "[project]/app/admin/equipamentos/page.tsx",
-                            lineNumber: 296,
+                            lineNumber: 365,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/admin/equipamentos/page.tsx",
-                    lineNumber: 285,
+                    lineNumber: 354,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/admin/equipamentos/page.tsx",
-                lineNumber: 281,
+                lineNumber: 350,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/admin/equipamentos/page.tsx",
-        lineNumber: 139,
+        lineNumber: 200,
         columnNumber: 5
     }, this);
 }
-_s(EquipamentosAdminPage, "rBHBQI+eFlARPRpVZHeC5xKWFAE=");
+_s(EquipamentosAdminPage, "9eOdOFdg6a8bB5voONFqpTEBjWE=");
 _c = EquipamentosAdminPage;
 var _c;
 __turbopack_context__.k.register(_c, "EquipamentosAdminPage");

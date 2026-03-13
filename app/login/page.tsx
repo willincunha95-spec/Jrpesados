@@ -36,21 +36,15 @@ export default function LoginPage() {
   // Demo login for testing
   const handleDemoLogin = async (role: "client" | "admin") => {
     setLoading(true)
+    setError("")
     
-    // Simulate login for demo with valid JWT structure (header.payload.signature)
-    // The payload needs 'sub' (email) and 'role'
-    const payload = { 
-      sub: role === "admin" ? "admin@jrpesados.com" : "cliente@email.com", 
-      role: role === "admin" ? "ADMIN" : "CLIENT" 
-    };
-    const demoToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify(payload))}.signature`;
-    
-    localStorage.setItem("token", demoToken)
-    
-    // Force a small delay to ensure localStorage is updated before redirect
-    setTimeout(() => {
-      window.location.href = role === "admin" ? "/admin" : "/portal";
-    }, 100);
+    try {
+      const demoEmail = role === "admin" ? "admin@jrpesados.com.br" : "cliente@gmail.com";
+      await login(demoEmail, "123456"); // This uses the real backend login
+    } catch (err) {
+      setError("Erro no login demo. O backend pode estar offline ou o import.sql não carregou os dados.");
+      setLoading(false)
+    }
   }
 
   return (

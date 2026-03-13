@@ -39,7 +39,7 @@ export function WorkWithUs() {
     setLoading(true)
 
     try {
-      // Use FormData to support file upload
+      // User FormData to support file upload again
       const data = new FormData()
       data.append("nome", formData.nome)
       data.append("email", formData.email)
@@ -51,7 +51,6 @@ export function WorkWithUs() {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
       const res = await fetch(`${API_URL}/trabalhe-conosco`, {
         method: "POST",
-        // Note: browser sets Content-Type to multipart/form-data automatically with boundary
         body: data,
       })
 
@@ -64,9 +63,12 @@ export function WorkWithUs() {
           cargoPretendido: "",
           linkCurriculo: "",
         })
+      } else {
+        const errText = await res.text()
+        alert("Erro ao enviar: " + errText)
       }
-    } catch (error) {
-      setSuccess(true)
+    } catch (error: any) {
+      alert("Erro de conexão: " + error.message)
     } finally {
       setLoading(false)
     }

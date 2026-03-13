@@ -36,6 +36,7 @@ export default function EquipamentosAdminPage() {
   const [filter, setFilter] = useState("all")
   const [equipamentos, setEquipamentos] = useState<Equipamento[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState<number | null>(null)
   
   const [formData, setFormData] = useState({
     nome: "",
@@ -48,6 +49,8 @@ export default function EquipamentosAdminPage() {
   })
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const fetchEquipamentos = async () => {
     try {
@@ -72,11 +75,64 @@ export default function EquipamentosAdminPage() {
     fetchEquipamentos()
   }, [])
 
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData()
+    formData.append("file", file)
+    const token = localStorage.getItem("token")
+
+    try {
+      const res = await fetch(`${API_URL}/equipamentos/upload`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      if (res.ok) {
+        return await res.text();
+      }
+      
+      const errorText = await res.text();
+      console.error(`Erro no upload (${res.status}):`, errorText);
+      throw new Error(errorText || "Erro no upload");
+    } catch (error) {
+      console.error("Erro upload:", error);
+      alert("Falha no upload da imagem: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+      return null;
+    }
+  }
+
+  const handleEdit = (eq: Equipamento) => {
+    setEditingId(eq.id)
+    setFormData({
+      nome: eq.nome || "",
+      marca: eq.marca || "",
+      modelo: eq.modelo || "",
+      numeroSerie: eq.numeroSerie || "",
+      valorDiaria: eq.valorDiaria ? eq.valorDiaria.toString() : "",
+      status: eq.status || "DISPONIVEL",
+      imageUrl: eq.imageUrl || ""
+    })
+    setShowForm(true)
+  }
+
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token")
+      let imageUrl = formData.imageUrl
+
+      if (selectedFile) {
+        const uploadedUrl = await handleFileUpload(selectedFile)
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        }
+      }
+
       const payload = {
+        ...(editingId ? { id: editingId } : {}),
         ...formData,
+        imageUrl,
         valorDiaria: parseFloat(formData.valorDiaria)
       }
 
@@ -91,16 +147,21 @@ export default function EquipamentosAdminPage() {
 
       if (res.ok) {
         setShowForm(false)
+        setEditingId(null)
         setFormData({
           nome: "", marca: "", modelo: "", numeroSerie: "", valorDiaria: "", status: "DISPONIVEL", imageUrl: ""
         })
+        setSelectedFile(null)
         fetchEquipamentos()
       } else {
-        alert("Erro ao salvar equipamento.")
+        const status = res.status;
+        const errorText = await res.text();
+        console.error(`Erro ${status}:`, errorText);
+        alert(`Erro ao salvar equipamento (${status}): ` + (errorText || res.statusText));
       }
     } catch (error) {
-      console.error("Erro ao salvar:", error)
-      alert("Erro de conexão ao salvar.")
+      console.error("Erro ao salvar:", error);
+      alert("Erro de conexão ao salvar: " + (error instanceof Error ? error.message : String(error)));
     }
   }
 
@@ -173,7 +234,9 @@ export default function EquipamentosAdminPage() {
       {/* New equipment form */}
       {showForm && (
         <div className="p-6 rounded-xl border border-border bg-card">
-          <h3 className="font-semibold text-foreground mb-4">Cadastrar Novo Equipamento</h3>
+          <h3 className="font-semibold text-foreground mb-4">
+            {editingId ? "Editar Equipamento" : "Cadastrar Novo Equipamento"}
+          </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Nome</Label>
@@ -230,12 +293,18 @@ export default function EquipamentosAdminPage() {
               </Select>
             </div>
             <div className="space-y-2 md:col-span-2 lg:col-span-3">
-              <Label>Foto do Equipamento (URL ou Caminho local, ex: /images/frota1.jpg)</Label>
-              <Input 
-                placeholder="Ex: https://... ou /images/foto.jpg" 
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-              />
+              <Label>Foto do Equipamento</Label>
+              <div className="flex gap-4 items-center">
+                <Input 
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  className="bg-card"
+                />
+                {formData.imageUrl && !selectedFile && (
+                  <p className="text-xs text-muted-foreground">Foto atual: {formData.imageUrl}</p>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex gap-2 mt-6">
@@ -309,7 +378,11 @@ export default function EquipamentosAdminPage() {
                       <td className="p-4">
                         {eq.imageUrl ? (
                           <div className="w-16 h-12 rounded bg-muted overflow-hidden">
-                            <img src={eq.imageUrl} alt={eq.nome} className="w-full h-full object-cover" />
+                            <img 
+                              src={eq.imageUrl.startsWith("http") ? eq.imageUrl : `${API_URL}${eq.imageUrl.startsWith("/") ? "" : "/"}${eq.imageUrl}`} 
+                              alt={eq.nome} 
+                              className="w-full h-full object-cover" 
+                            />
                           </div>
                         ) : (
                           <div className="w-16 h-12 rounded bg-secondary/50 flex items-center justify-center">
@@ -338,7 +411,7 @@ export default function EquipamentosAdminPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex gap-1">
-                          <Button size="sm" variant="ghost">
+                          <Button size="sm" variant="ghost" onClick={() => handleEdit(eq)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 

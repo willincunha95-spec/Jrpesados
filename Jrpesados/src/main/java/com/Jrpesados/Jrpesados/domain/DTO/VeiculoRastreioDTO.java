@@ -6,5 +6,9 @@ public record VeiculoRastreioDTO(
         String modelo,
         Double latitude,
         Double longitude,
-        String urlStreamVideo
+        String urlStreamVideo,
+        String origem,
+        String destino,
+        String statusCarga,
+        String previsaoChegada
 ) {}

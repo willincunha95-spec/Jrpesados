@@ -29,12 +29,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Decode JWT token to get user info
   const decodeToken = (token: string): User | null => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]))
+      if (!token || !token.includes(".")) return null
+      const base64Payload = token.split(".")[1]
+      let payloadText = ""
+      
+      if (typeof window !== "undefined") {
+        payloadText = atob(base64Payload)
+      } else {
+        payloadText = Buffer.from(base64Payload, "base64").toString()
+      }
+      
+      const payload = JSON.parse(payloadText)
       return {
         email: payload.sub,
         role: payload.role || "CLIENT",
       }
-    } catch {
+    } catch (e) {
+      console.error("Erro ao decodificar token:", e)
       return null
     }
   }

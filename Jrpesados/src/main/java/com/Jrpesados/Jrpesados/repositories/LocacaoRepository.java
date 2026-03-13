@@ -9,4 +9,7 @@ import java.util.List;
 
 @Repository
 public interface LocacaoRepository extends JpaRepository<Locacao , Long> {
-    List<Locacao> findByClienteEmailAndStatus(String email, StatusLocacao status);}
+    List<Locacao> findByClienteEmailAndStatus(String email, StatusLocacao status);
+
+    long countByStatus(StatusLocacao status);
+}

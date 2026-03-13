@@ -29,6 +29,8 @@ public class Veiculo {
     private String descricaoCarga;
     private String tamanhoCarga;
     private Double pesoCarga;
+    private String origem;
+    private String destino;
 
     @Enumerated(EnumType.STRING)
     private StatusEncomenda statusCarga;
