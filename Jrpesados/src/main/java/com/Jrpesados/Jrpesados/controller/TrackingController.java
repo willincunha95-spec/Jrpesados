@@ -20,17 +20,10 @@ public class TrackingController {
     @PostMapping("/sync")
     public ResponseEntity<?> syncTracking() {
         try {
-            try {
-                ssxTrackingService.syncVehicles();
-            } catch (Exception ve) {
-                System.out.println("Aviso: Falha ao sincronizar veículos (pode ser falta de permissão): " + ve.getMessage());
-                // Continuamos para tentar sincronizar as posições
-            }
-            
             ssxTrackingService.syncPositions();
             
             Map<String, String> response = new HashMap<>();
-            response.put("message", "Frota e posições sincronizadas com sucesso!");
+            response.put("message", "Posições sincronizadas com sucesso!");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();

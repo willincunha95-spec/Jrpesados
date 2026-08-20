@@ -38,25 +38,15 @@ public class FinanceiroService {
     }
 
     public BigDecimal calcularSaldoTotal() {
-        List<Financeiro> todos = financeiroRepository.findAll();
-        BigDecimal entradas = todos.stream()
-                .filter(f -> f.getTipo() == TipoMovimentacao.RECEITA)
-                .map(Financeiro::getValor)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        BigDecimal saidas = todos.stream()
-                .filter(f -> f.getTipo() == TipoMovimentacao.DESPESA)
-                .map(Financeiro::getValor)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal entradas = financeiroRepository.sumValorByTipo(TipoMovimentacao.RECEITA);
+        BigDecimal saidas = financeiroRepository.sumValorByTipo(TipoMovimentacao.DESPESA);
         
         return entradas.subtract(saidas);
     }
 
     // Este método agora compila sem erros
     public List<HistoricoClienteDTO> buscarHistoricoPorCliente(String email) {
-        return financeiroRepository.findAll().stream()
-                // Garante que o usuário e o e-mail não sejam nulos para evitar NullPointerException
-                .filter(f -> f.getUsuario() != null && f.getUsuario().getEmail().equals(email))
+        return financeiroRepository.findByUsuarioEmail(email).stream()
                 .map(f -> new HistoricoClienteDTO(
                         f.getId(),
                         f.getDataVencimento() != null ? f.getDataVencimento().toString() : "N/A",

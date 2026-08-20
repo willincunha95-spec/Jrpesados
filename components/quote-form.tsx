@@ -39,7 +39,7 @@ export function QuoteForm() {
     setLoading(true)
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
       const res = await fetch(`${API_URL}/leads/solicitar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

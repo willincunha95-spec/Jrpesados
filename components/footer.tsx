@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin } from "lucide-react"
+import { Phone, Mail, MapPin, Clock, Instagram, Linkedin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -30,14 +30,9 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
+                href="https://www.instagram.com/jrpesadostranspor?igsh=bzRxaGJveHBtbjN3"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 aria-label="Instagram"
               >
@@ -113,11 +108,15 @@ export function Footer() {
                   <p className="text-sm text-muted-foreground">(11) 95857-2567</p>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">jrpesadoslog@hotmail.com</p>
-                  <p className="text-sm text-muted-foreground">jrpesados@jrpesados.com</p>
+              <li className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-yellow-500 shrink-0" />
+                <div className="flex flex-col">
+                  <a href="mailto:jrpesadoslog@gmail.com" className="text-gray-400 hover:text-yellow-500 transition-colors">
+                    jrpesadoslog@gmail.com
+                  </a>
+                  <a href="mailto:jrpesados@jrpesados.com" className="text-gray-400 hover:text-yellow-500 transition-colors">
+                    jrpesados@jrpesados.com
+                  </a>
                 </div>
               </li>
               <li className="flex items-start gap-3">

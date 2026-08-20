@@ -33,20 +33,6 @@ export default function LoginPage() {
     }
   }
 
-  // Demo login for testing
-  const handleDemoLogin = async (role: "client" | "admin") => {
-    setLoading(true)
-    setError("")
-    
-    try {
-      const demoEmail = role === "admin" ? "admin@jrpesados.com.br" : "cliente@gmail.com";
-      await login(demoEmail, "123456"); // This uses the real backend login
-    } catch (err) {
-      setError("Erro no login demo. O backend pode estar offline ou o import.sql não carregou os dados.");
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-screen flex">
       {/* Left side - Form */}
@@ -96,7 +82,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Senha</Label>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link href="/forgot-password" title="Recuperar senha" className="text-sm text-primary hover:underline">
                   Esqueceu a senha?
                 </Link>
               </div>
@@ -130,34 +116,6 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Ou para testar
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => handleDemoLogin("client")}
-              disabled={loading}
-            >
-              Demo Cliente
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => handleDemoLogin("admin")}
-              disabled={loading}
-            >
-              Demo Admin
-            </Button>
-          </div>
 
           <p className="text-center text-sm text-muted-foreground">
             Não tem conta?{" "}

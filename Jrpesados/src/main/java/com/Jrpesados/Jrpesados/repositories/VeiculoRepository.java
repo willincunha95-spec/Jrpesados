@@ -17,5 +17,7 @@ public interface VeiculoRepository extends JpaRepository<Veiculo , Long> {
 
     java.util.List<Veiculo> findByProprietarioEmail(String email);
 
+    java.util.List<Veiculo> findByProprietarioEmailIgnoreCase(String email);
+
     long countByStatusCarga(com.Jrpesados.Jrpesados.domain.StatusEncomenda status);
 }

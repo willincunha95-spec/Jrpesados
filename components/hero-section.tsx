@@ -88,22 +88,22 @@ export function HeroSection() {
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border-4 border-background group relative">
                 <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
                 <img
-                  src="/images/red-truck.jpg"
-                  alt="Frota JR Pesados"
+                  src="/images/truck-rosa.jpg"
+                  alt="Frota JR Pesados - Caminhão Rosa"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://placehold.co/800x600/1a1a1a/ffaa00?text=red-truck.jpg"
+                    (e.target as HTMLImageElement).src = "https://placehold.co/800x600/1a1a1a/ffaa00?text=truck-rosa.jpg"
                   }}
                 />
               </div>
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border-4 border-background group relative">
                 <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
                 <img
-                  src="/images/crane-truck.jpg"
-                  alt="Guindaste JR Pesados"
+                  src="/images/frota1.jpg"
+                  alt="Frota JR Pesados"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://placehold.co/800x600/1a1a1a/ffaa00?text=crane-truck.jpg"
+                    (e.target as HTMLImageElement).src = "https://placehold.co/800x600/1a1a1a/ffaa00?text=frota1.jpg"
                   }}
                 />
               </div>
@@ -112,11 +112,11 @@ export function HeroSection() {
             <div className="w-full max-w-2xl aspect-[21/9] rounded-2xl overflow-hidden shadow-xl border-4 border-background group relative">
               <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
               <img
-                src="/images/white-truck.jpg"
+                src="/images/frota2.jpg"
                 alt="Operação JR Pesados"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://placehold.co/1200x600/1a1a1a/ffaa00?text=white-truck.jpg"
+                  (e.target as HTMLImageElement).src = "https://placehold.co/1200x600/1a1a1a/ffaa00?text=frota2.jpg"
                 }}
               />
             </div>

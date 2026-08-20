@@ -6,63 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { Equipamento } from "@/lib/api"
 
-// Mock data for when API is not available
-const mockEquipamentos: Equipamento[] = [
-  {
-    id: 1,
-    nome: "Caminhão Munck 15t",
-    marca: "Mercedes-Benz",
-    modelo: "Atego 2426",
-    numeroSerie: "MK-001",
-    valorDiaria: 1500,
-    status: "DISPONIVEL",
-  },
-  {
-    id: 2,
-    nome: "Caminhão Munck 25t",
-    marca: "Scania",
-    modelo: "P310",
-    numeroSerie: "MK-002",
-    valorDiaria: 2200,
-    status: "DISPONIVEL",
-  },
-  {
-    id: 3,
-    nome: "Empilhadeira 3t",
-    marca: "Hyster",
-    modelo: "H60FT",
-    numeroSerie: "EMP-001",
-    valorDiaria: 800,
-    status: "LOCADO",
-  },
-  {
-    id: 4,
-    nome: "Guindaste Telescópico",
-    marca: "Liebherr",
-    modelo: "LTM 1060",
-    numeroSerie: "GT-001",
-    valorDiaria: 3500,
-    status: "DISPONIVEL",
-  },
-  {
-    id: 5,
-    nome: "Guincho Pesado",
-    marca: "Volvo",
-    modelo: "FH 540",
-    numeroSerie: "GP-001",
-    valorDiaria: 1800,
-    status: "MANUTENCAO",
-  },
-  {
-    id: 6,
-    nome: "Plataforma Elevatória",
-    marca: "JLG",
-    modelo: "860SJ",
-    numeroSerie: "PE-001",
-    valorDiaria: 950,
-    status: "DISPONIVEL",
-  },
-]
+// Empty state for production - waiting for real data from the API
+const mockEquipamentos: Equipamento[] = []
 
 const statusConfig = {
   DISPONIVEL: { label: "Disponível", variant: "default" as const, color: "bg-green-500" },
@@ -88,7 +33,7 @@ export function EquipmentCatalog() {
   useEffect(() => {
     async function fetchEquipamentos() {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
         const res = await fetch(`${API_URL}/equipamentos/catalogo`)
         if (res.ok) {
           const data = await res.json()
@@ -154,7 +99,7 @@ export function EquipmentCatalog() {
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : (
+        ) : filteredEquipamentos.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEquipamentos.map((equipamento) => {
               const Icon = getEquipmentIcon(equipamento.nome)
@@ -169,7 +114,7 @@ export function EquipmentCatalog() {
                   <div className="h-48 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center relative">
                     {equipamento.imageUrl ? (
                       <img 
-                        src={equipamento.imageUrl.startsWith("http") ? equipamento.imageUrl : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080") + equipamento.imageUrl} 
+                        src={equipamento.imageUrl.startsWith("http") ? equipamento.imageUrl : (process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br") + equipamento.imageUrl} 
                         className="w-full h-full object-cover" 
                         alt={equipamento.nome} 
                       />
@@ -209,6 +154,20 @@ export function EquipmentCatalog() {
                 </div>
               )
             })}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-card/50 rounded-2xl border border-dashed border-border animate-in fade-in duration-700">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="h-8 w-8 text-primary/50" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">Nenhum equipamento disponível</h3>
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              No momento não possuímos equipamentos disponíveis para locação. 
+              Entre em contato conosco para verificar futuras disponibilidades.
+            </p>
+            <Button variant="outline" className="mt-6" onClick={() => window.location.href='#cotacao'}>
+              Falar com Consultor
+            </Button>
           </div>
         )}
       </div>

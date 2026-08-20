@@ -18,7 +18,7 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState({ type: "", text: "" })
   const router = useRouter()
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   const handleRequestToken = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
         setStep(2)
         setMessage({ 
           type: "success", 
-          text: "Simulação: Token gerado! Verifique o console do VS Code (terminal do Java) para copiar o código." 
+          text: "Token enviado! Verifique sua caixa de entrada (e pasta de spam)." 
         })
       } else {
         setMessage({ type: "error", text: "Erro ao solicitar recuperação. Tente novamente." })
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
           <p className="text-muted-foreground mt-2">
             {step === 1 
               ? "Informe seu e-mail para receber o token de recuperação." 
-              : "Insira o token do console e sua nova senha."}
+              : "Insira o token recebido e sua nova senha."}
           </p>
         </div>
 

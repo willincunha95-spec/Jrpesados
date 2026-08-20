@@ -1,1 +1,7 @@
 node_modules
+.next
+.env.local
+.idea
+target
+*.zip
+*.tar.gz

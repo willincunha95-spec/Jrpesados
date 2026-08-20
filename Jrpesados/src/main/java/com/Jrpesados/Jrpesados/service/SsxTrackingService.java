@@ -39,6 +39,7 @@ public class SsxTrackingService {
 
     private String currentAccessToken;
     private LocalDateTime tokenExpiresAt;
+    private LocalDateTime lastSyncTime;
 
     @Autowired
     private VeiculoRepository veiculoRepository;
@@ -66,23 +67,25 @@ public class SsxTrackingService {
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
                 this.currentAccessToken = (String) body.get("AccessToken");
-                
-                // SSX ExpiresIn returns .NET ticks (e.g., 639089419300265482)
-                // Usar valor fixo de 12 horas para evitar erros de calc. no Java com ticks altos
                 this.tokenExpiresAt = LocalDateTime.now().plusHours(12);
-                
                 return this.currentAccessToken;
             } else {
-                throw new RuntimeException("Failed to login to SSX API: " + response.getStatusCode().value());
+                throw new RuntimeException("Falha no login SSX: " + response.getStatusCode().value());
             }
-        } catch (org.springframework.web.client.HttpStatusCodeException e) {
-            throw new RuntimeException("Error communicating with SSX API /Login: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            throw new RuntimeException("Error communicating with SSX API /Login: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao autenticar no SSX: " + e.getMessage());
         }
     }
 
     public void syncPositions() {
+        // Cooldown de 15 minutos para evitar erro 429
+        if (lastSyncTime != null && lastSyncTime.plusMinutes(15).isAfter(LocalDateTime.now())) {
+            java.time.Duration diff = java.time.Duration.between(LocalDateTime.now(), lastSyncTime.plusMinutes(15));
+            long mins = diff.toMinutes();
+            long secs = diff.minusMinutes(mins).getSeconds();
+            throw new RuntimeException("Aguarde " + mins + "m " + secs + "s para sincronizar novamente (Limite de segurança da API).");
+        }
+
         String token = getAccessToken();
         String url = baseUrl + "/v3/Tracking/PositionHistory/List";
 
@@ -90,10 +93,7 @@ public class SsxTrackingService {
         headers.set("Authorization", "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Data dinâmica para o filtro (hoje)
         String today = java.time.LocalDate.now().toString();
-        
-        // Fetching latest positions for all tracked units. Using a dynamic date.
         String jsonFilter = "[\n" +
                 "  {\n" +
                 "    \"PropertyName\": \"EventDate\",\n" +
@@ -102,18 +102,13 @@ public class SsxTrackingService {
                 "  }\n" +
                 "]";
         
-        System.out.println("Chamando SSX PositionHistory/List com filtro: " + jsonFilter);
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonFilter, headers);
 
         try {
             ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, List.class);
-            System.out.println("Resposta SSX PositionHistory: HTTP " + response.getStatusCode().value());
-
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 List<Map<String, Object>> positions = response.getBody();
-                System.out.println("Sincronização SSX: " + positions.size() + " posições recebidas.");
                 
-                // Caching the vehicles locally in a Map for fast lookup
                 List<Veiculo> veiculosLocais = veiculoRepository.findAll();
                 Map<String, Veiculo> plateMap = new HashMap<>();
                 for (Veiculo v : veiculosLocais) {
@@ -122,12 +117,8 @@ public class SsxTrackingService {
                     }
                 }
 
-                int newVehiclesCount = 0;
                 for (Map<String, Object> pData : positions) {
-                    // SSX provides the actual plate in the 'Plate' field
                     String plateFromSsx = (String) pData.get("Plate");
-                    
-                    // Fallback to TrackedUnit if Plate is missing (cleaning it to get the plate part)
                     if (plateFromSsx == null) {
                         String trackedUnit = (String) pData.get("TrackedUnit");
                         if (trackedUnit != null && trackedUnit.contains("-")) {
@@ -144,17 +135,13 @@ public class SsxTrackingService {
 
                     if (latitude != null && longitude != null) {
                         String cleanedSsxPlate = plateFromSsx.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
-                        
                         Veiculo v = plateMap.get(cleanedSsxPlate);
+                        
                         if (v == null) {
-                            // AUTO-REGISTRATION: Create new vehicle if not found
                             v = new Veiculo();
                             v.setPlaca(plateFromSsx);
                             v.setModelo("Importado via SSX");
                             v.setStatusCarga(StatusEncomenda.AGUARDANDO_COLETA);
-                            System.out.println("=== SYSTEM: Auto-cadastrando novo veículo: " + plateFromSsx);
-                            newVehiclesCount++;
-                            // Add to map so we don't create it again in the same loop
                             plateMap.put(cleanedSsxPlate, v);
                         }
 
@@ -164,46 +151,32 @@ public class SsxTrackingService {
                         veiculoRepository.save(v);
                     }
                 }
-                if (newVehiclesCount > 0) {
-                    System.out.println("=== SYSTEM: " + newVehiclesCount + " novos veículos foram auto-cadastrados.");
-                }
-            } else {
-                throw new RuntimeException("Failed to sync positions: HTTP " + response.getStatusCode().value());
+                // Atualiza o tempo da última sincronização com sucesso
+                this.lastSyncTime = LocalDateTime.now();
             }
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
-            System.err.println("ERRO na API SSX: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
             if (e.getStatusCode().value() == 429) {
-                throw new RuntimeException("Limite de requisições excedido pela SSX (HTTP 429). Aguarde alguns minutos antes de tentar novamente.");
+                // Se der 429, forçamos um cooldown maior
+                this.lastSyncTime = LocalDateTime.now(); 
+                throw new RuntimeException("Limite excedido na SSX. O sistema entrou em modo de espera por 15 minutos.");
             }
-            throw new RuntimeException("Erro ao sincronizar posições: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw new RuntimeException("Erro na API SSX: " + e.getStatusCode());
         } catch (Exception e) {
-            System.err.println("ERRO inesperado ao sincronizar posições: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Erro ao sincronizar posições SSX: " + e.getMessage(), e);
+            throw new RuntimeException("Erro inesperado na sincronização: " + e.getMessage());
         }
     }
 
-    public void syncVehicles() {
-        // Desativado temporariamente para evitar erro 403 e economizar quota de requisições (429)
-        /*
-        String token = getAccessToken();
-        ...
-        */
-        System.out.println("Sincronização de veículos ignorada (desativada).");
-    }
-
     /**
-     * Sincronização automática a cada 5 minutos (300.000ms).
-     * O initialDelay de 60.000ms (1 minuto) evita que rode exatamente na hora que o app inicia.
+     * Sincronização automática a cada 20 minutos para garantir que o 
+     * usuário ainda tenha margem para cliques manuais.
      */
-    @Scheduled(fixedDelay = 300000, initialDelay = 60000)
+    @Scheduled(fixedDelay = 1200000, initialDelay = 60000)
     public void scheduledSync() {
-        System.out.println("=== SYSTEM: Iniciando sincronização automática SSX... ===");
+        System.out.println("=== SYSTEM: Iniciando sincronização automática SSX (20 min interval) ===");
         try {
             syncPositions();
-            System.out.println("=== SYSTEM: Sincronização automática SSX concluída com sucesso. ===");
         } catch (Exception e) {
-            System.err.println("=== SYSTEM: Falha na sincronização automática SSX: " + e.getMessage());
+            System.err.println("=== SYSTEM: Sync automático ignorado ou falhou: " + e.getMessage());
         }
     }
 }

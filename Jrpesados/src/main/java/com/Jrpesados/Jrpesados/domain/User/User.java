@@ -51,6 +51,9 @@ public class User implements UserDetails {
     private String resetToken;
     private LocalDateTime resetTokenExpiry;
 
+    private boolean isEmailVerified = true; // Default true for existing users
+    private String verificationToken;
+
     public User(String email, String password , UserRole role){
         this.email = email;
         this.password = password;
@@ -112,6 +115,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEmailVerified;
     }
 }

@@ -183,8 +183,14 @@ export default function AdminLayout({
             <Menu className="h-6 w-6" />
           </button>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            <span className="font-semibold">Admin</span>
+            <Image
+              src="/images/logo.jpg"
+              alt="JR Pesados"
+              width={35}
+              height={35}
+              className="rounded-full shadow-lg border border-primary/20"
+            />
+            <span className="font-display font-bold text-foreground">Admin</span>
           </div>
           <div className="w-6" />
         </header>

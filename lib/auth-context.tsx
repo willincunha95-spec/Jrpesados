@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (email: string, password: string) => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
     
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
@@ -74,7 +74,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (!res.ok) {
-      throw new Error("Credenciais inválidas")
+        let errorMessage = "E-mail ou senha incorretos."
+        try {
+            const serverError = await res.text()
+            if (serverError && !serverError.includes("<!DOCTYPE")) {
+                errorMessage = serverError
+            }
+        } catch (e) {}
+        throw new Error(errorMessage)
     }
 
     const token = await res.text()
@@ -93,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const register = async (email: string, password: string) => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
     
     const res = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
@@ -102,17 +109,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (!res.ok) {
-      // For demo/dev: if backend fails or says exists, we can mock a success if it's a known test email
-      if (email.includes("test") || email.includes("jr")) {
-        console.log("Mocking registration success for dev/test email");
-        await login(email, password);
-        return;
-      }
-      throw new Error("Falha no cadastro. O e-mail pode já estar em uso.")
+      let errorMessage = "Falha no cadastro. O e-mail pode já estar em uso."
+      try {
+          const serverError = await res.text()
+          if (serverError && !serverError.includes("<!DOCTYPE")) {
+              errorMessage = serverError
+          }
+      } catch (e) {}
+      throw new Error(errorMessage)
     }
 
-    // Auto login after registration
-    await login(email, password)
+    // Com verificação de e-mail ativa, não podemos fazer auto-login direto!
+    // O usuário deve ver a mensagem de sucesso e verificar seu e-mail.
   }
 
   const logout = () => {

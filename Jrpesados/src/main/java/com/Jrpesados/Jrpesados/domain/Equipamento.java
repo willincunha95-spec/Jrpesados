@@ -25,6 +25,7 @@ public class Equipamento {
 
     private BigDecimal valorDiaria;
     
+    @Column(name="imagem_url")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)

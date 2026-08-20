@@ -60,7 +60,7 @@ export default function FinanceiroPage() {
   const fetchTransacoes = async () => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:8080/financeiro/todas", {
+      const res = await fetch("https://api.jrpesadostransportes.com.br/financeiro/todas", {
         headers: { "Authorization": `Bearer ${token}` }
       })
       if (res.ok) {
@@ -88,7 +88,7 @@ export default function FinanceiroPage() {
         status: form.status
       }
 
-      const res = await fetch(`http://localhost:8080/financeiro/registrar`, {
+      const res = await fetch(`https://api.jrpesadostransportes.com.br/financeiro/registrar`, {
         method: "POST",
         headers: { 
           "Authorization": `Bearer ${token}`,
@@ -114,7 +114,7 @@ export default function FinanceiroPage() {
   const handleDownloadPdf = async (id: number) => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:8080/financeiro/pdf/${id}`, {
+      const res = await fetch(`https://api.jrpesadostransportes.com.br/financeiro/pdf/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       })
       if (res.ok) {
@@ -371,7 +371,7 @@ export default function FinanceiroPage() {
                                 if (confirm("Excluir este lançamento?")) {
                                   try {
                                     const token = localStorage.getItem("token")
-                                    const res = await fetch(`http://localhost:8080/financeiro/${t.id}`, {
+                                    const res = await fetch(`https://api.jrpesadostransportes.com.br/financeiro/${t.id}`, {
                                       method: "DELETE",
                                       headers: { "Authorization": `Bearer ${token}` }
                                     })

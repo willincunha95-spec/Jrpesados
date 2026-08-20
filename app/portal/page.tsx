@@ -11,7 +11,7 @@ export default function PortalDashboard() {
   const [historicoCount, setHistoricoCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   useEffect(() => {
     const fetchData = async () => {

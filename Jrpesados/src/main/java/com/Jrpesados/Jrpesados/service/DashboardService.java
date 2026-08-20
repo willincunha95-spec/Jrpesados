@@ -24,10 +24,9 @@ public class DashboardService {
 
         // Estatísticas em tempo real para o Front-end
         dados.put("totalVeiculos", veiculoRepository.count());
-        dados.put("ordensAbertas", osRepository.findByStatus(StatusOS.ABERTA).size());
-        dados.put("locacoesAtivas", locacaoRepository.findAll().size()); // Filtraremos por status ativa depois
-        dados.put("pecasAbaixoMinimo", pecaRepository.findAll().stream()
-                .filter(p -> p.getQuantidadeEstoque() < 5).count());
+        dados.put("ordensAbertas", osRepository.countByStatus(StatusOS.ABERTA));
+        dados.put("locacoesAtivas", locacaoRepository.count()); // Simplificado para total
+        dados.put("pecasAbaixoMinimo", pecaRepository.countByQuantidadeEstoqueLessThan(5));
 
         return dados;
     }

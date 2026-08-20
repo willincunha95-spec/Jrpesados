@@ -20,7 +20,7 @@ export default function PerfilPage() {
   const { user } = useAuth()
   const [saved, setSaved] = useState(false)
   const [profileData, setProfileData] = useState({
-    nome: user?.name || "Cliente",
+    nome: user?.email ? user.email.split('@')[0] : "Cliente",
     email: user?.email || "cliente@email.com",
     telefone: "(11) 99999-8888",
     empresa: "Empresa do Cliente Ltda",

@@ -48,7 +48,7 @@ export function WorkWithUs() {
       if (formData.linkCurriculo) data.append("linkCurriculo", formData.linkCurriculo)
       if (formData.arquivo) data.append("arquivo", formData.arquivo)
 
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
       const res = await fetch(`${API_URL}/trabalhe-conosco`, {
         method: "POST",
         body: data,

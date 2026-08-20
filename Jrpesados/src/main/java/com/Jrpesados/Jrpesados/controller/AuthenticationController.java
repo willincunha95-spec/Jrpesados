@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -40,52 +37,86 @@ public class AuthenticationController {
     //  o Spring vai  comparar com a senha salva no banco de dados
     @PostMapping("/login")
     public ResponseEntity login (@RequestBody @Valid AuthenticationDTO data){
-        var userNamePassoword = new UsernamePasswordAuthenticationToken(data.email() , data.password());
-        var auth = this.authenticationManager.authenticate(userNamePassoword);
+        try {
+            var userNamePassoword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+            var auth = this.authenticationManager.authenticate(userNamePassoword);
 
-        User user = (User) auth.getPrincipal();
-        // Self-healing the admin account if it was somehow registered as CLIENT
-        if (user.getEmail() != null && user.getEmail().toLowerCase().startsWith("admin@jrpesados.com") && user.getRole() != UserRole.ADMIN) {
-            user.setRole(UserRole.ADMIN);
-            userRepository.save(user);
+            User user = (User) auth.getPrincipal();
+            // Self-healing the admin account
+            if (user.getEmail() != null && user.getEmail().toLowerCase().startsWith("admin@jrpesados.com") && user.getRole() != UserRole.ADMIN) {
+                user.setRole(UserRole.ADMIN);
+                userRepository.save(user);
+            }
+
+            var token = tokenService.generateToken(user);
+            return ResponseEntity.ok(token);
+        } catch (org.springframework.security.authentication.DisabledException e) {
+            return ResponseEntity.status(403).body("Por favor, verifique sua conta no e-mail recebido antes de fazer login.");
+        } catch (org.springframework.security.authentication.BadCredentialsException e) {
+            return ResponseEntity.status(401).body("E-mail ou senha incorretos.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao realizar login: " + e.getMessage());
         }
-
-        var token = tokenService.generateToken(user);
-        return  ResponseEntity.ok(token);
     }
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-        // 1. Verificamos se o e-mail já existe (usando o método do seu repository)
+        // 1. Verificamos se o e-mail já existe
         if (this.userRepository.findByEmail(data.email()) != null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("E-mail já cadastrado.");
         }
 
         // 2. Criptografamos a senha
         String encryptedPassword = passwordEncoder.encode(data.password());
 
-        // 3. Criamos o usuário (Atenção à ordem: E-mail, Senha Criptografada, Role)
+        // 3. Criamos o usuário e geramos token de verificação
         User newUser = new User(data.email(), encryptedPassword, UserRole.CLIENT);
+        String verificationToken = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        newUser.setVerificationToken(verificationToken);
+        newUser.setEmailVerified(false); // Agora exigimos verificação
 
-        // 4. Salvamos no PostgreSQL do Docker
+        // 4. Salvamos
         this.userRepository.save(newUser);
 
-        return ResponseEntity.ok().build();
+        // 5. Enviamos e-mail de verificação
+        try {
+            emailService.enviarEmailVerificacao(data.email(), verificationToken);
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar e-mail de verificação: " + e.getMessage());
+        }
+
+        return ResponseEntity.ok("Usuário registrado! Verifique seu e-mail para ativar a conta.");
     }
+
     @PostMapping("/admin/register-staff")
     public ResponseEntity registerStaff(@RequestBody @Valid RegisterDTO data){
         if (this.userRepository.findByEmail(data.email()) != null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("E-mail já cadastrado.");
         }
 
         String encryptedPassword = passwordEncoder.encode(data.password());
-
-        // Aqui usamos a role vinda do DTO (MECANIC ou ADMIN)
         User newUser = new User(data.email(), encryptedPassword, data.role());
+        newUser.setEmailVerified(true); // Staff já nasce verificado (ou admin ativa)
 
         this.userRepository.save(newUser);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/verify-account")
+    public ResponseEntity verifyAccount(@RequestParam String email, @RequestParam String token) {
+        User user = (User) userRepository.findByEmail(email);
+        if (user == null || user.getVerificationToken() == null || !user.getVerificationToken().equals(token)) {
+            return ResponseEntity.badRequest().body("Código de verificação inválido.");
+        }
+
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Conta verificada com sucesso!");
+    }
+
+    // ... (rest of the code omitted for replacement boundaries)
 
     // Usando uma classe interna ou record local para o DTO do forgot-password 
     public record ForgotPasswordDTO(String email) {}
@@ -97,7 +128,7 @@ public class AuthenticationController {
             return ResponseEntity.ok().build();
         }
         
-        // Simulação: gera um token UUID curto
+        // Gera um token de 8 caracteres
         String token = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         user.setResetToken(token);
         user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));

@@ -48,7 +48,7 @@ export default function EquipamentosAdminPage() {
     imageUrl: ""
   })
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 

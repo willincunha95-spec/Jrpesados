@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { Eye, EyeOff, Loader2, Shield, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, Loader2, Shield, ArrowLeft, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/auth-context"
+import { BackButton } from "@/components/back-button"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -15,20 +17,27 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
+  const [verificationCode, setVerificationCode] = useState("")
+  const [verified, setVerified] = useState(false)
   const { register } = useAuth()
+  const router = useRouter()
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setSuccess(false)
 
     if (password !== confirmPassword) {
       setError("As senhas não coincidem.")
       return
     }
 
-    if (password.length < 6) {
-      setError("A senha deve ter no mínimo 6 caracteres.")
+    if (password.length < 4) {
+      setError("A senha deve ter no mínimo 4 caracteres.")
       return
     }
 
@@ -36,8 +45,36 @@ export default function RegisterPage() {
 
     try {
       await register(email, password)
+      setSuccess(true)
     } catch (err: any) {
       setError(err.message || "Falha no cadastro. O e-mail pode já estar em uso.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyAccount = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    try {
+      const res = await fetch(`${API_URL}/auth/verify-account?email=${email}&token=${verificationCode}`, {
+        method: "POST"
+      })
+
+      const data = await res.text()
+
+      if (res.ok) {
+        setVerified(true)
+        setTimeout(() => {
+          router.push("/login")
+        }, 2000)
+      } else {
+        setError(data || "Código inválido ou expirado.")
+      }
+    } catch (err) {
+      setError("Erro ao verificar conta. Tente novamente.")
     } finally {
       setLoading(false)
     }
@@ -82,8 +119,12 @@ export default function RegisterPage() {
       </div>
 
       {/* Right side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex-1 flex flex-col p-8">
+        <div className="p-4 lg:hidden">
+          <BackButton />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <Link href="/" className="inline-flex items-center gap-3 mb-8">
               <Image
@@ -104,95 +145,157 @@ export default function RegisterPage() {
               Voltar para login
             </Link>
 
-            <h2 className="text-2xl font-display font-bold text-foreground">
-              Criar nova conta
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Preencha os dados abaixo para se cadastrar
-            </p>
-          </div>
+            {success ? (
+              <div className="space-y-6">
+                {!verified ? (
+                  <>
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                      <Shield className="h-10 w-10 text-primary" />
+                    </div>
+                    <h2 className="text-2xl font-display font-bold text-foreground">
+                      Verifique sua Conta
+                    </h2>
+                    <p className="text-muted-foreground mt-2">
+                      Digite o código de 6 dígitos que enviamos para <strong>{email}</strong>
+                    </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                {error}
+                    <form onSubmit={handleVerifyAccount} className="space-y-4">
+                      {error && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
+                          {error}
+                        </div>
+                      )}
+                      <div className="flex justify-center">
+                        <Input
+                          type="text"
+                          maxLength={6}
+                          placeholder="000000"
+                          className="w-48 text-center text-2xl tracking-[0.5em] font-bold h-14 bg-background border-border"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value.toUpperCase())}
+                          required
+                        />
+                      </div>
+                      <Button className="w-full" size="lg" disabled={loading}>
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Ativar Conta"}
+                      </Button>
+                      <button 
+                        type="button" 
+                        onClick={() => setSuccess(false)}
+                        className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
+                      >
+                        Mudar e-mail
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <div className="space-y-6 animate-in fade-in zoom-in duration-500">
+                    <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+                      <Check className="h-10 w-10 text-green-500" />
+                    </div>
+                    <h2 className="text-2xl font-display font-bold text-foreground">
+                      Conta Ativada!
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Sucesso! Você será redirecionado para o login em instantes...
+                    </p>
+                  </div>
+                )}
               </div>
+            ) : (
+              <>
+                <h2 className="text-2xl font-display font-bold text-foreground">
+                  Criar nova conta
+                </h2>
+                <p className="text-muted-foreground mt-2">
+                  Preencha os dados abaixo para se cadastrar
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-5 mt-8">
+                  {error && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="space-y-2 text-left">
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2 text-left">
+                    <Label htmlFor="password">Senha</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Mínimo 4 caracteres"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-left">
+                    <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                    <Input
+                      id="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Repita a senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Criando conta...
+                      </>
+                    ) : (
+                      "Criar Conta"
+                    )}
+                  </Button>
+                </form>
+
+                <p className="text-center text-sm text-muted-foreground mt-6">
+                  Já tem conta?{" "}
+                  <Link href="/login" className="text-primary hover:underline font-medium">
+                    Faça login
+                  </Link>
+                </p>
+
+                <p className="text-center text-xs text-muted-foreground mt-8">
+                  Ao criar sua conta, você concorda com nossos{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Termos de Uso
+                  </a>{" "}
+                  e{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Política de Privacidade
+                  </a>
+                </p>
+              </>
             )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Mínimo 6 caracteres"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar senha</Label>
-              <Input
-                id="confirmPassword"
-                type={showPassword ? "text" : "password"}
-                placeholder="Repita a senha"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criando conta...
-                </>
-              ) : (
-                "Criar Conta"
-              )}
-            </Button>
-          </form>
-
-          <p className="text-center text-sm text-muted-foreground">
-            Já tem conta?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
-              Faça login
-            </Link>
-          </p>
-
-          <p className="text-center text-xs text-muted-foreground">
-            Ao criar sua conta, você concorda com nossos{" "}
-            <a href="#" className="text-primary hover:underline">
-              Termos de Uso
-            </a>{" "}
-            e{" "}
-            <a href="#" className="text-primary hover:underline">
-              Política de Privacidade
-            </a>
-          </p>
+          </div>
+          </div>
         </div>
       </div>
     </div>

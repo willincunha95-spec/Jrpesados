@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "JR Pesados - Transportes e Remoções",
   description: "Soluções completas em transportes pesados, locação de equipamentos e remoções industriais. Caminhões Munck, Guinchos e Empilhadeiras.",
   keywords: ["transportes pesados", "munck", "guindaste", "remoções", "locação de equipamentos", "logística"],
+  icons: {
+    icon: "/images/logo.jpg",
+    apple: "/images/logo.jpg",
+  }
 }
 
 export const viewport: Viewport = {

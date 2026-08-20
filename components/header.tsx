@@ -25,13 +25,15 @@ export function Header() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/images/logo.jpg"
-              alt="JR Pesados"
-              width={60}
-              height={60}
-              className="rounded-full"
-            />
+            <div className="relative w-[60px] h-[60px]">
+              <Image
+                src="/images/logo.jpg"
+                alt="JR Pesados"
+                fill
+                className="rounded-full object-cover border border-border"
+                priority
+              />
+            </div>
             <div className="hidden sm:block">
               <h1 className="font-display font-bold text-xl text-foreground">JR Pesados</h1>
               <p className="text-xs text-muted-foreground">Transportes e Remoções</p>

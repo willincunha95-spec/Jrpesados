@@ -21,7 +21,7 @@ export default function RastreioPage() {
   const [selectedRastreio, setSelectedRastreio] = useState<Rastreio | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   useEffect(() => {
     const fetchRastreios = async () => {

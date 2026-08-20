@@ -19,7 +19,7 @@ export default function HistoricoPage() {
   const [selectedItem, setSelectedItem] = useState<Historico | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.jrpesadostransportes.com.br"
 
   useEffect(() => {
     const fetchHistorico = async () => {

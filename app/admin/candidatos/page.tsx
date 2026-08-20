@@ -36,7 +36,7 @@ export default function CandidatosPage() {
   const fetchCandidatos = async () => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:8080/trabalhe-conosco", {
+      const response = await fetch("https://api.jrpesadostransportes.com.br/trabalhe-conosco", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -65,7 +65,7 @@ export default function CandidatosPage() {
   const handleUpdateStatus = async (id: number, action: "aprovar" | "rejeitar") => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch(`http://localhost:8080/trabalhe-conosco/${id}/${action}`, {
+      const response = await fetch(`https://api.jrpesadostransportes.com.br/trabalhe-conosco/${id}/${action}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -177,7 +177,7 @@ export default function CandidatosPage() {
 
                 <div className="flex items-center gap-2">
                   <a
-                    href={candidato.linkCurriculo?.startsWith("http") ? candidato.linkCurriculo : `http://localhost:8080${candidato.linkCurriculo}`}
+                    href={candidato.linkCurriculo?.startsWith("http") ? candidato.linkCurriculo : `https://api.jrpesadostransportes.com.br${candidato.linkCurriculo}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

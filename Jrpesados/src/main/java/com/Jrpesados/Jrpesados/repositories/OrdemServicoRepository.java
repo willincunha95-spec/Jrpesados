@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Long> {
-    Optional<OrdemServicoRepository> findByVeiculoId(Long veiculoId);
+    Optional<OrdemServico> findByVeiculoId(Long veiculoId);
 
-    List<OrdemServicoRepository> findByStatus(StatusOS status);
+    List<OrdemServico> findByStatus(StatusOS status);
+
+    long countByStatus(StatusOS status);
 }

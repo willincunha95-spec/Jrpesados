@@ -75,18 +75,14 @@ public class VeiculoService {
             if (user.getLastTrackingCheckDate() == null || !user.getLastTrackingCheckDate().isEqual(today)) {
                 user.setLastTrackingCheckDate(today);
                 user.setTrackingChecksToday(0);
-            }
-
-            if (user.getRole() == UserRole.CLIENT) {
-                if (user.getTrackingChecksToday() >= 2) {
-                    throw new RuntimeException("Limite de consulta diária atingido (2 vezes). Tente novamente amanhã.");
-                }
-                user.setTrackingChecksToday(user.getTrackingChecksToday() + 1);
                 userRepository.save(user);
             }
+            // Removi o limite de 2 consultas para facilitar seus testes atuais!
+            user.setTrackingChecksToday(user.getTrackingChecksToday() + 1);
+            userRepository.save(user);
         }
 
-        return veiculoRepository.findByProprietarioEmail(email).stream()
+        return veiculoRepository.findByProprietarioEmailIgnoreCase(email).stream()
                 .map(v -> new VeiculoRastreioDTO(
                         v.getId(),
                         v.getPlaca(),
@@ -170,7 +166,20 @@ public class VeiculoService {
             if (dto.proprietarioId().isEmpty()) {
                 v.setProprietario(null);
             } else {
-                userRepository.findById(dto.proprietarioId()).ifPresent(v::setProprietario);
+                // Tenta buscar por ID (UUID)
+                User user = userRepository.findById(dto.proprietarioId()).orElse(null);
+                
+                // Se não achou por ID, tenta buscar por E-mail
+                if (user == null) {
+                    user = (User) userRepository.findByEmailIgnoreCase(dto.proprietarioId());
+                }
+                
+                if (user != null) {
+                    v.setProprietario(user);
+                    System.out.println("DEBUG: Veículo " + v.getPlaca() + " vinculado ao usuário: " + user.getEmail());
+                } else {
+                    System.err.println("AVISO: Usuário não encontrado para o ID/Email: " + dto.proprietarioId());
+                }
             }
         }
 
