@@ -27,6 +27,8 @@ services:
       - JWT_SECRET=sua-chave-secreta-alterar-no-producao
     depends_on:
       - db
+    volumes:
+      - ./uploads:/app/uploads
     networks:
       - jrpesados-network
 
